@@ -1,0 +1,74 @@
+<!-- Citation for this file:
+// Date: 2/18/2024
+// URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%200%20-%20Setting%20Up%20Node.js
+// Application: Visual Studio Code, version 1.85.1 
+// Type: starter/example code provided by Dr. Michael Curry, starter/example code is filled in/modified by Jason Szeto
+// Author(s): Dr. Michael Curry, Jason Szeto
+// Code version: N/A -->
+
+<!-- index.hbs -->
+{{!-- Create a search for the table --}}
+<h2>Search for a Driver</h2>
+<form id="search-driver-html" method='GET' action='/'>
+    <label for="input-lastname">Search by Last Name: </label>
+    <input type="text" name="lastname" id="input-lastname-html-search">
+    <input type="submit">
+    <a href='/'><button>Reset</button></a>
+</form>
+
+{{!-- Create a table --}}
+<h2>Table of Drivers</h2>
+<table id="drivers-table">
+
+    {{!-- Header section --}}
+    <thead>
+        <tr>
+            <!-- Modify column names to display -->
+            <th>Driver ID</th>
+            <th>Email</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Last Name</th>
+            <!-- FIX --><th>Update</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+
+    {{!-- Body section --}}
+    <tbody>
+        {{!-- For each row, print the SQL data in order --}}
+        {{#each data}}
+        <tr data-value={{this.driverID}}>
+            <td>{{this.driverID}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.firstName}}</td>
+            <td>{{this.middleName}}</td>
+            <td>{{this.lastName}}</td>
+            <!-- FIX --><td><button onclick="updateDriver({{this.driverID}})">Update</button></td>
+            <td><button onclick="deleteDriver({{this.driverID}})">Delete</button></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+<script src="./js/delete_driver.js"></script>
+
+{{!-- Form to add a record to the table  --}}
+<h2>Add a New Driver</h2>
+<form id="add-driver-form-ajax">  
+    <label for="input-email">email: </label>
+    <input type="email" name="input-email" id="input-email" placeholder="required">
+
+    <label for="input-firstname">First Name: </label>
+    <input type="text" name="input-firstname" id="input-firstname" placeholder="required">
+
+    <label for="input-middlename">Middle Name: </label>
+    <input type="text" name="input-middlename" id="input-middlename" placeholder="can be left blank">
+
+    <label for="input-lastname">Last Name: </label>
+    <input type="text" name="input-lastname" id="input-lastname" placeholder="required">
+
+    <input type="submit">
+</form>
+{{!-- Embed our javascript to handle the DOM manipulation and AJAX request --}}
+<script src="./js/add_driver.js"></script>
+

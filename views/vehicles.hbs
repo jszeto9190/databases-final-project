@@ -1,0 +1,52 @@
+<!-- Citation for this file:
+// Date: 2/18/2024
+// URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%200%20-%20Setting%20Up%20Node.js
+// Application: Visual Studio Code, version 1.85.1 
+// Type: starter/example code provided by Dr. Michael Curry, starter/example code is filled in/modified by Jason Szeto
+// Author(s): Dr. Michael Curry, Jason Szeto
+// Code version: N/A -->
+
+<!-- vehicles.hbs -->
+{{!-- Create a table --}}
+<h2>Table of Vehicles</h2>
+<table id="vehicles-table">
+
+    {{!-- Header section --}}
+    <thead>
+        <tr>
+            <!-- Modify column names to display -->
+            <th>Vehicle ID</th>
+            <th>Location ID</th>
+            <th>Make ID</th>
+            <th>Model ID</th>
+            <th>Mileage</th>
+<!-- FIX --><th>Update</th>
+        </tr>
+    </thead>
+
+    {{!-- Body section --}}
+    <tbody>
+        {{!-- For each row, print the SQL data in order --}}
+        {{#each data}}
+        <tr data-value={{this.vehicleID}}>
+            <td>{{this.vehicleID}}</td>
+            <td>{{this.locationID}}</td>
+            <td>{{this.makeID}}</td>
+            <td>{{this.modelID}}</td>
+            <td>{{this.mileage}}</td>
+            <!-- FIX --><td><button onclick="updateDriver({{this.driverID}})">Update</button></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{!-- Form to add a record to the table  --}}
+<h2>Add a New Vehicle</h2>
+<form id="add-vehicle-form-ajax">  
+    <label for="input-mileage">Mileage: </label>
+    <input type="number" name="input-mileage" id="input-mileage" placeholder="required">
+
+    <input type="submit">
+</form>
+{{!-- Embed our javascript to handle the DOM manipulation and AJAX request --}}
+<script src="./js/add_vehicle.js"></script>
