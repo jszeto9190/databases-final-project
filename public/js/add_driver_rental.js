@@ -42,8 +42,8 @@ addDriverRentalForm.addEventListener("submit", function (e) {
             addRowToTable(xhttp.response);
 
             // Clear the input fields for another transaction
-            inputDriverID.value = '';
-            inputRentalID.value = '';
+            inputDriverID.value = 0;
+            inputRentalID.value = 0;
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
             console.log("There was an error with the input.")

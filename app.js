@@ -14,7 +14,7 @@ var express = require('express');
 var app = express();
 app.use(express.json())
 
-PORT = 9480;
+PORT = 9482;
 
 // Database
 var db = require('./database/db-connector');
@@ -57,14 +57,15 @@ app.post('/add-driver-ajax', function(req, res)
     let data = req.body;
 
     // Capture NULL values
-    let middlename = parseInt(data.middlename);
-    if (isNaN(middlename))
-    {
-        middlename = 'NULL'
-    }
+    //let middlename = data.middlename;
 
+    //if (middlename.trim() === '') 
+    //{
+    //    middlename = null;
+    //}
+    
     // Create the query and run it on the database
-    query1 = `INSERT INTO Drivers (email, firstName, middleName, lastName) VALUES ('${data.email}', '${data.firstname}', '${middlename}', '${data.lastname}' )`;
+    query1 = `INSERT INTO Drivers (email, firstName, middleName, lastName) VALUES ('${data.email}', '${data.firstname}', '${data.middlename}', '${data.lastname}' )`;
     db.pool.query(query1, function(error, rows, fields){
 
         // Check to see if there was an error
@@ -101,16 +102,17 @@ app.post('/add-driver-ajax', function(req, res)
 app.post('/add-driver-form', function(req, res) {
     // Capture the incoming data and parse it back to a JS object
     let data = req.body;
-    
+
     // Capture NULL values
-    let middlename = parseInt(data['input-firstname']);
-    if (isNaN(middlename))
-    {
-        middlename = 'NULL'
-    }
-    
+    //let middlename = data['input-middlename'];
+
+    //if (middlename.trim() === '') 
+    //{
+    //    middlename = 'null';
+    //}
+
     // Create the query and run it on the database
-    query1 = `INSERT INTO Drivers (email, firstName, middleName, lastName) VALUES ('${data['input-email']}', '${data['input-firstname']}', '${middlename}', '${data['input-lastname']}' )`;
+    query1 = `INSERT INTO Drivers (email, firstName, middleName, lastName) VALUES ('${data['input-email']}', '${data['input-firstname']}', '${data['input-middlename']}', '${data['input-lastname']}' )`;
     db.pool.query(query1, function(error, rows, fields) {
     
         // Check to see if there was an error
@@ -179,7 +181,7 @@ app.post('/add-driver-rental-ajax', function(req, res)
 
 
         // Create the query and run it on the database
-        query1 = `INSERT INTO DriversRentals (driverID, rentalID) VALUES ('${data.driverid}', '${data.rentalid}')`;
+        query1 = `INSERT INTO DriversRentals (driverID, rentalID) VALUES (${data.driverid}, ${data.rentalid})`;
         db.pool.query(query1, function(error, rows, fields){
 
             // Check to see if there was an error
@@ -218,7 +220,7 @@ app.post('/add-driver-rental-ajax', function(req, res)
         let data = req.body;
         
         // Create the query and run it on the database
-        query1 = `INSERT INTO DriversRentals (driverID, rentalID) VALUES ('${data[input-driverid]}', '${data[input-rentalid]}')`;
+        query1 = `INSERT INTO DriversRentals (driverID, rentalID) VALUES (${data[input-driverid]}, ${data[input-rentalid]})`;
         db.pool.query(query1, function(error, rows, fields) {
         
             // Check to see if there was an error
@@ -232,7 +234,7 @@ app.post('/add-driver-rental-ajax', function(req, res)
             // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM bsg_people and
             // presents it on the screen
             else {
-                 res.redirect('/');
+                 res.redirect('/driversrentals');
                  }
         })
         });

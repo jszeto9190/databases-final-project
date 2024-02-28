@@ -35,7 +35,6 @@ addDriverForm.addEventListener("submit", function (e) {
         middlename: middleNameValue,
         lastname: lastNameValue
     }
-    
     // Setup our AJAX request
     var xhttp = new XMLHttpRequest();
     xhttp.open("POST", "/add-driver-ajax", true);
@@ -47,11 +46,10 @@ addDriverForm.addEventListener("submit", function (e) {
 
             // Add the new data to the table
             addRowToTable(xhttp.response);
-
             // Clear the input fields for another transaction
             inputEmail.value = '';
             inputFirstName.value = '';
-            inputMiddleName.value = '';
+            inputMiddleName.value = null;
             inputLastName.value = '';
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
@@ -59,9 +57,9 @@ addDriverForm.addEventListener("submit", function (e) {
         }
     }
 
+    console.log(data)
     // Send the request and wait for the response
     xhttp.send(JSON.stringify(data));
-
 })
 
 
