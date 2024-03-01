@@ -49,7 +49,7 @@ addDriverRentalForm.addEventListener("submit", function (e) {
             console.log("There was an error with the input.")
         }
     }
-
+    console.log(data)
     // Send the request and wait for the response
     xhttp.send(JSON.stringify(data));
 
@@ -72,23 +72,32 @@ addRowToTable = (data) => {
 
     // Create a row and 4 cells
     let row = document.createElement("TR");
-    let driversIDRentalsIDCell = document.createElement("TD");
+    let driverIDRentalIDCell = document.createElement("TD");
     let driverIDCell = document.createElement("TD");
     let rentalIDCell = document.createElement("TD");
 
+    let deleteCell = document.createElement("TD");
 
     // Fill the cells with correct data
-    driversIDRentalsIDCell.innerText = newRow.driversIDRentalsID;
+    driverIDRentalIDCell.innerText = newRow.driverIDRentalID;
     driverIDCell.innerText = newRow.driverID;
     rentalIDCell.innerText = newRow.rentalID;
 
+    deleteCell = document.createElement("button");
+    deleteCell.innerHTML = "Delete";
+    deleteCell.onclick = function(){
+        deleteDriverRental(newRow.driverIDRentalID);
+    };
+
     // Add the cells to the row
-    row.appendChild(driversIDRentalsIDCell);
+    row.appendChild(driverIDRentalIDCell);
     row.appendChild(driverIDCell);
     row.appendChild(rentalIDCell);
+
+    row.appendChild(deleteCell);
     
     // Add a row attribute so the deleteRow function can find a newly added row
-    row.setAttribute('data-value', newRow.driversIDRentalsID);
+    row.setAttribute('data-value', newRow.driverIDRentalID);
 
     // Add the row to the table
     currentTable.appendChild(row);

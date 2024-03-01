@@ -18,6 +18,7 @@
             <th>Driver and Rental ID</th>
             <th>Driver ID</th>
             <th>Rental ID</th>
+            <th>Delete</th>
         </tr>
     </thead>
 
@@ -25,14 +26,16 @@
     <tbody>
         {{!-- For each row, print the SQL data in order --}}
         {{#each data}}
-        <tr data-value={{this.driversIDRentalsID}}>
-            <td>{{this.driversIDRentalsID}}</td>
+        <tr data-value={{this.driverIDRentalID}}>
+            <td>{{this.driverIDRentalID}}</td>
             <td>{{this.driverID}}</td>
             <td>{{this.rentalID}}</td>
+            <td><button onclick="deleteDriverRental({{this.driverIDRentalID}})">Delete</button></td>
         </tr>
         {{/each}}
     </tbody>
 </table>
+<script src="./js/delete_driver_rental.js"></script>
 
 {{!-- Form to add a record to the table  --}}
 <h2>Add a New Driver Rental</h2>

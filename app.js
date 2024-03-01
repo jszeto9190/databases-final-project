@@ -179,9 +179,11 @@ app.post('/add-driver-rental-ajax', function(req, res)
         // Capture the incoming data and parse it back to a JS object
         let data = req.body;
 
+        let driverid = parseInt(data.driverid);
+        let rentalid = parseInt(data.rentalid);
 
         // Create the query and run it on the database
-        query1 = `INSERT INTO DriversRentals (driverID, rentalID) VALUES (${data.driverid}, ${data.rentalid})`;
+        query1 = `INSERT INTO DriversRentals (driverID, rentalID) VALUES (${driverid}, ${rentalid})`;
         db.pool.query(query1, function(error, rows, fields){
 
             // Check to see if there was an error
@@ -215,30 +217,50 @@ app.post('/add-driver-rental-ajax', function(req, res)
     });
     
     
-    app.post('/add-driver-rental-form', function(req, res) {
-        // Capture the incoming data and parse it back to a JS object
-        let data = req.body;
-        
-        // Create the query and run it on the database
-        query1 = `INSERT INTO DriversRentals (driverID, rentalID) VALUES (${data[input-driverid]}, ${data[input-rentalid]})`;
-        db.pool.query(query1, function(error, rows, fields) {
-        
-            // Check to see if there was an error
-            if (error) {
-        
-            // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-            console.log(error)
-            res.sendStatus(400);
-            }
-        
-            // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM bsg_people and
-            // presents it on the screen
-            else {
-                 res.redirect('/driversrentals');
-                 }
-        })
-        });
+app.post('/add-driver-rental-form', function(req, res) {
+    // Capture the incoming data and parse it back to a JS object
+    let data = req.body;
+    
+    let driverid = parseInt(data['input-driverid']);
+    let rentalid = parseInt(data['input-rentalid']);
 
+    // Create the query and run it on the database
+    query1 = `INSERT INTO DriversRentals (driverID, rentalID) VALUES (${driverid}, ${rentalid})`;
+    db.pool.query(query1, function(error, rows, fields) {
+    
+        // Check to see if there was an error
+        if (error) {
+    
+        // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+        console.log(error)
+        res.sendStatus(400);
+        }
+    
+        // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM bsg_people and
+        // presents it on the screen
+        else {
+                res.redirect('/driversrentals');
+                }
+    })
+    });
+
+app.delete('/delete-driver-rental-ajax/', function(req,res,next){
+    let data = req.body;
+    let driverIDRentalID = parseInt(data.driveridrentalid);
+    let deleteDriversRentals = `DELETE FROM DriversRentals WHERE driverIDRentalID = ?`;
+    
+            // Run the 1st query
+            db.pool.query(deleteDriversRentals, [driverIDRentalID], function(error, rows, fields){
+                if (error) {
+    
+                // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+                console.log(error);
+                res.sendStatus(400);
+                }
+                else {
+                    res.sendStatus(204);
+                }
+            })});
 
 
 
@@ -267,9 +289,10 @@ app.post('/add-rental-ajax', function(req, res)
 {
   // Capture the incoming data and parse it back to a JS object
   let data = req.body;
+  let vehicleid = parseInt(data.vehicleid);
 
   // Create the query and run it on the database
-  query1 = `INSERT INTO Rentals (vehicleID, startDate, endDate) VALUES (${data.vehicleid}, ${data.startdate}, ${data.enddate})`;
+  query1 = `INSERT INTO Rentals (vehicleID, startDate, endDate) VALUES (${vehicleid}, ${data.startdate}, ${data.enddate})`;
   db.pool.query(query1, function(error, rows, fields){
 
       // Check to see if there was an error
@@ -306,9 +329,10 @@ app.post('/add-rental-ajax', function(req, res)
 app.post('/add-rental-form', function(req, res) {
   // Capture the incoming data and parse it back to a JS object
   let data = req.body;
+  let vehicleid = parseInt(data['input-vehicleid']);
  
   // Create the query and run it on the database
-  query1 = `INSERT INTO Rentals (vehicleID, startDate, endDate) VALUES (${data['input-vehicleid']}, ${data['input-startdate']}, ${data['input-enddate']})`;
+  query1 = `INSERT INTO Rentals (vehicleID, startDate, endDate) VALUES (${vehicleid}, ${data['input-startdate']}, ${data['input-enddate']})`;
   db.pool.query(query1, function(error, rows, fields) {
   
       // Check to see if there was an error
