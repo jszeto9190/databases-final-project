@@ -570,12 +570,16 @@ app.get('/models', function(req, res)
 });
 
 app.post('/add-model-ajax', function(req, res) 
-{
+{   
+    console.log('Received a POST request to /add-model-ajax');
     // Capture the incoming data and parse it back to a JS object
     let data = req.body;
+    let modelname = data.modelname;
+    let modelyear = parseInt(data.modelyear);
+    console.log(modelyear);
 
     // Create the query and run it on the database
-    query1 = `INSERT INTO Models (modelName, modelYear) VALUES ('${data.modelname}', ${data.modelyear} )`;
+    query1 = `INSERT INTO Models (modelName, modelYear) VALUES ('${modelname}', ${modelyear} )`;
     db.pool.query(query1, function(error, rows, fields){
 
         // Check to see if there was an error
@@ -598,10 +602,10 @@ app.post('/add-model-ajax', function(req, res)
                     console.log(error);
                     res.sendStatus(400);
                 }
-                // If all went well, send status.
+                // If all went well, send rows.
                 else
                 {
-                    res.sendStatus(204);
+                    res.send(rows);
                 }
             })
         }
@@ -610,11 +614,13 @@ app.post('/add-model-ajax', function(req, res)
 
 
 app.post('/add-model-form', function(req, res) {
+    console.log('Received a POST request to /add-model-form');
     // Capture the incoming data and parse it back to a JS object
     let data = req.body;
+    let modelyear = parseInt(data['input-modelyear']);
     
     // Create the query and run it on the database
-    query1 = `INSERT INTO Models (modelName, modelYear) VALUES ('${data['input-modelname']}', ${data[input-modelyear]})`;
+    query1 = `INSERT INTO Models (modelName, modelYear) VALUES ('${data['input-modelname']}', ${modelyear})`;
     db.pool.query(query1, function(error, rows, fields) {
     
         // Check to see if there was an error

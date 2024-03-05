@@ -42,8 +42,9 @@ addDriverForm.addEventListener("submit", function (e) {
 
     // Tell our AJAX request how to resolve
     xhttp.onreadystatechange = () => {
+        console.log(xhttp.status)
         if (xhttp.readyState == 4 && xhttp.status == 200) {
-
+            console.log(xhttp.response)        
             // Add the new data to the table
             addRowToTable(xhttp.response);
             // Clear the input fields for another transaction
