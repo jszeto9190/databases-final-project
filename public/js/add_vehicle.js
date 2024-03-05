@@ -25,7 +25,7 @@ addVehicleForm.addEventListener("submit", function (e) {
     let locationIDValue = inputLocationID.value;
     let makeIDValue = inputMakeID.value;
     let modelIDValue = inputModelID.value;
-    let mileageValue = inputMileage.value;
+    let mileageValue = parseInt(inputMileage.value);
 
     // Put our data we want to send in a javascript object
     let data = {
@@ -34,7 +34,7 @@ addVehicleForm.addEventListener("submit", function (e) {
         modelid: modelIDValue,
         mileage: mileageValue,
     }
-    
+    console.log(data)
     // Setup our AJAX request
     var xhttp = new XMLHttpRequest();
     xhttp.open("POST", "/add-vehicle-ajax", true);

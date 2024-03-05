@@ -25,7 +25,7 @@ addLocationForm.addEventListener("submit", function (e) {
     let cityValue = inputCity.value;
     let stateValue = inputState.value;
     let addressValue = inputAddress.value;
-    let locationVehicleCapacityValue = inputLocationVehicleCapacity.value;
+    let locationVehicleCapacityValue = parseInt(inputLocationVehicleCapacity.value);
 
 
     // Put our data we want to send in a javascript object
@@ -35,7 +35,7 @@ addLocationForm.addEventListener("submit", function (e) {
         address: addressValue,
         locationvehiclecapacity: locationVehicleCapacityValue
     }
-    
+    console.log(data)
     // Setup our AJAX request
     var xhttp = new XMLHttpRequest();
     xhttp.open("POST", "/add-location-ajax", true);

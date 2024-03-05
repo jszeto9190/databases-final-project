@@ -53,7 +53,7 @@
 {{!-- Form to add a record to the table  --}}
 <h2>Add a New Driver</h2>
 <form id="add-driver-form-ajax">  
-    <label for="input-email">email: </label>
+    <label for="input-email">Email: </label>
     <input type="email" name="input-email" id="input-email" placeholder="required">
 
     <label for="input-firstname">First Name: </label>
@@ -81,13 +81,9 @@
         {{/each}}
     </select>
 
-    <label for="input-email-list">Email: </label>
-    <select name="input-email-list" id="mySelectEmail">
-        <option value = "test">Select an Email</option>
-        {{#each data}}
-        <option value="{{this.email}}">{{this.email}}</option>
-        {{/each}}
-    </select>
+    <label for="input-email-update">Email: </label>
+    <input type="email" name="input-email-update" id="input-email-update" placeholder="required">
+    
     <input type="submit">
 </form>
 

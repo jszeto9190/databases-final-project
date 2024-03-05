@@ -183,6 +183,7 @@ app.put('/put-driver-ajax', function(req,res,next){
               else
               {
               res.send(rows);
+              console.log(rows);
               }
   })});
 
@@ -576,7 +577,6 @@ app.post('/add-model-ajax', function(req, res)
     let data = req.body;
     let modelname = data.modelname;
     let modelyear = parseInt(data.modelyear);
-    console.log(modelyear);
 
     // Create the query and run it on the database
     query1 = `INSERT INTO Models (modelName, modelYear) VALUES ('${modelname}', ${modelyear} )`;
@@ -655,9 +655,10 @@ app.post('/add-location-ajax', function(req, res)
 {
     // Capture the incoming data and parse it back to a JS object
     let data = req.body;
+    let locationvehiclecapacity = parseInt(data.locationvehiclecapacity)
 
     // Create the query and run it on the database
-    query1 = `INSERT INTO Locations (city, state, address, locationVehicleCapacity) VALUES ('${data.city}', '${data.state}', '${data.address}', '${data.locationvehiclecapacity}' )`;
+    query1 = `INSERT INTO Locations (city, state, address, locationVehicleCapacity) VALUES ('${data.city}', '${data.state}', '${data.address}', ${locationvehiclecapacity} )`;
     db.pool.query(query1, function(error, rows, fields){
 
         // Check to see if there was an error
@@ -696,7 +697,7 @@ app.post('/add-location-form', function(req, res) {
     let data = req.body;
 
     // Create the query and run it on the database
-    query1 = `INSERT INTO Locations (city, state, address, locationVehicleCapacity) VALUES ('${data['input-city']}', '${data['input-state']}', '${data['input-address']}', '${data['input-locationvehiclecapacity']}' )`;
+    query1 = `INSERT INTO Locations (city, state, address, locationVehicleCapacity) VALUES ('${data['input-city']}', '${data['input-state']}', '${data['input-address']}', ${data['input-locationvehiclecapacity']} )`;
     db.pool.query(query1, function(error, rows, fields) {
     
         // Check to see if there was an error
