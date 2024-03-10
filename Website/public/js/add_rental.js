@@ -7,51 +7,47 @@
 // Code version: N/A
 
 // Get the objects we need to modify
-let addDriverForm = document.getElementById('add-driver-form-ajax');
+let addRentalForm = document.getElementById('add-rental-form-ajax');
 
 // Modify the objects we need
-addDriverForm.addEventListener("submit", function (e) {
+addRentalForm.addEventListener("submit", function (e) {
     
     // Prevent the form from submitting
     e.preventDefault();
 
     // Get form fields we need to get data from
-    let inputEmail = document.getElementById("input-email");
-    let inputFirstName = document.getElementById("input-firstname");
-    let inputMiddleName = document.getElementById("input-middlename");
-    let inputLastName = document.getElementById("input-lastname");
+    let inputVehicleID = document.getElementById("input-vehicleid");
+    let inputStartDate = document.getElementById("input-startdate");
+    let inputEndDate = document.getElementById("input-enddate");
 
     // Get the values from the form fields
-    let emailValue = inputEmail.value;
-    let firstNameValue = inputFirstName.value;
-    let middleNameValue = inputMiddleName.value;
-    let lastNameValue = inputLastName.value;
-
+    let vehicleIDValue = inputVehicleID.value;
+    let startDateValue = inputStartDate.value;
+    let endDateValue = inputEndDate.value;
 
     // Put our data we want to send in a javascript object
     let data = {
-        email: emailValue,
-        firstname: firstNameValue,
-        middlename: middleNameValue,
-        lastname: lastNameValue
+        vehicleid: vehicleIDValue,
+        startdate: startDateValue,
+        enddate: endDateValue,
     }
+    
     // Setup our AJAX request
     var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "/add-driver-ajax", true);
+    xhttp.open("POST", "/add-rental-ajax", true);
     xhttp.setRequestHeader("Content-type", "application/json");
 
     // Tell our AJAX request how to resolve
     xhttp.onreadystatechange = () => {
-        console.log(xhttp.status)
         if (xhttp.readyState == 4 && xhttp.status == 200) {
-            console.log(xhttp.response)        
+
             // Add the new data to the table
             addRowToTable(xhttp.response);
+
             // Clear the input fields for another transaction
-            inputEmail.value = '';
-            inputFirstName.value = '';
-            inputMiddleName.value = null;
-            inputLastName.value = '';
+            inputVehicleID.value = '';
+            inputStartDate.value = '';
+            inputEndDate.value = '';
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
             console.log("There was an error with the input.")
@@ -60,7 +56,7 @@ addDriverForm.addEventListener("submit", function (e) {
 
     // Send the request and wait for the response
     xhttp.send(JSON.stringify(data));
-    console.log(JSON.stringify(data))
+
 })
 
 
@@ -69,7 +65,7 @@ addDriverForm.addEventListener("submit", function (e) {
 addRowToTable = (data) => {
 
     // Get a reference to the current table on the page and clear it out.
-    let currentTable = document.getElementById("drivers-table");
+    let currentTable = document.getElementById("rentals-table");
 
     // Get the location where we should insert the new row (end of table)
     let newRowIndex = currentTable.rows.length;
@@ -80,45 +76,36 @@ addRowToTable = (data) => {
 
     // Create a row and 4 cells
     let row = document.createElement("TR");
-    let driveridCell = document.createElement("TD");
-    let emailCell = document.createElement("TD");
-    let firstnameCell = document.createElement("TD");
-    let middlenameCell = document.createElement("TD");
-    let lastnameCell = document.createElement("TD");
+    let rentalidCell = document.createElement("TD");
+    let vehicleidCell = document.createElement("TD");
+    let startdateCell = document.createElement("TD");
+    let enddateCell = document.createElement("TD");
 
     let deleteCell = document.createElement("TD");
 
     // Fill the cells with correct data
-    driveridCell.innerText = newRow.driverID;
-    emailCell.innerText = newRow.email;
-    firstnameCell.innerText = newRow.firstName;
-    middlenameCell.innerText = newRow.middleName;
-    lastnameCell.innerText = newRow.lastName;
+    rentalidCell.innerText = newRow.rentalID;
+    vehicleidCell.innerText = newRow.vehicleID;
+    startdateCell.innerText = newRow.startDate;
+    enddateCell.innerText = newRow.endDate;
 
     deleteCell = document.createElement("button");
     deleteCell.innerHTML = "Delete";
     deleteCell.onclick = function(){
-        deleteDriver(newRow.driverID);
+        deleteRental(newRow.rentalID);
     };
 
     // Add the cells to the row
-    row.appendChild(driveridCell);
-    row.appendChild(emailCell);
-    row.appendChild(firstnameCell);
-    row.appendChild(middlenameCell);
-    row.appendChild(lastnameCell);
-    
+    row.appendChild(rentalidCell);
+    row.appendChild(vehicleidCell);
+    row.appendChild(startdateCell);
+    row.appendChild(enddateCell);
+
     row.appendChild(deleteCell);
     
     // Add a row attribute so the deleteRow function can find a newly added row
-    row.setAttribute('data-value', newRow.driverID);
+    row.setAttribute('data-value', newRow.rentalID);
 
     // Add the row to the table
     currentTable.appendChild(row);
-
-    let selectMenuDriver = document.getElementById("mySelectDriver");
-    let optionDriver = document.createElement("option");
-    optionDriver.text = newRow.firstName + ' ' +  newRow.middleName + ' ' +  newRow.lastName;
-    optionDriver.value = newRow.driverID;
-    selectMenuDriver.add(option);
 }

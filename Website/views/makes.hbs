@@ -1,0 +1,45 @@
+<!-- Citation for this file:
+// Date: 2/18/2024
+// URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%200%20-%20Setting%20Up%20Node.js
+// Application: Visual Studio Code, version 1.85.1 
+// Type: starter/example code provided by Dr. Michael Curry, starter/example code is filled in/modified by Jason Szeto
+// Author(s): Dr. Michael Curry, Jason Szeto
+// Code version: N/A -->
+
+<!-- makes.hbs -->
+
+{{!-- Create a table --}}
+<h2>Table of Makes</h2>
+<table id="makes-table">
+
+    {{!-- Header section --}}
+    <thead>
+        <tr>
+            <!-- Modify column names to display -->
+            <th>Make ID</th>
+            <th>Make Name</th>
+        </tr>
+    </thead>
+
+    {{!-- Body section --}}
+    <tbody>
+        {{!-- For each row, print the SQL data in order --}}
+        {{#each data}}
+        <tr data-value={{this.makeID}}>
+            <td>{{this.makeID}}</td>
+            <td>{{this.makeName}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{!-- Form to add a record to the table  --}}
+<h2>Add a New Make</h2>
+<form id="add-make-form-ajax">  
+    <label for="input-makename">Make: </label>
+    <input type="text" name="input-makename" id="input-makename" minlength="1">
+    <input type="submit">
+</form>
+{{!-- Embed our javascript to handle the DOM manipulation and AJAX request --}}
+<script src="./js/add_make.js"></script>
+

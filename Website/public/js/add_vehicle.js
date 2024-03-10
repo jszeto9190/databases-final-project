@@ -22,7 +22,7 @@ addVehicleForm.addEventListener("submit", function (e) {
     let inputMileage = document.getElementById("input-mileage");
 
     // Get the values from the form fields
-    let locationIDValue =  inputLocationID.value ? parseInt(inputLocationID.value) : null;
+    let locationIDValue = parseInt(inputLocationID.value);
     let makeIDValue = parseInt(inputMakeID.value);
     let modelIDValue = parseInt(inputModelID.value);
     let mileageValue = parseInt(inputMileage.value);
@@ -45,13 +45,13 @@ addVehicleForm.addEventListener("submit", function (e) {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
 
             // Add the new data to the table
-            console.log(xhttp.response);
             addRowToTable(xhttp.response);
+
             // Clear the input fields for another transaction
-            inputLocationID.value = '';
-            inputMakeID.value = '';
-            inputModelID.value = '';
-            inputMileage.value = '';
+            inputLocationID.value = 0;
+            inputMakeID.value = 0;
+            inputModelID.value = 0;
+            inputMileage.value = 0;
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
             console.log("There was an error with the input.")
@@ -66,13 +66,13 @@ addVehicleForm.addEventListener("submit", function (e) {
 
 // Creates a single row from an Object representing a single record 
 addRowToTable = (data) => {
-    console.log(data);
+
     // Get a reference to the current table on the page and clear it out.
     let currentTable = document.getElementById("vehicles-table");
 
     // Get the location where we should insert the new row (end of table)
     let newRowIndex = currentTable.rows.length;
-
+    console.log(data);
     
     // Get a reference to the new row from the database query (last object)
     let parsedData = JSON.parse(data);
@@ -88,7 +88,7 @@ addRowToTable = (data) => {
 
     // Fill the cells with correct data
     vehicleidCell.innerText = newRow.vehicleID;
-    locationidCell.innerText = newRow.fullAddress ? newRow.fullAddress : "N/A";
+    locationidCell.innerText = newRow.fullAddress;
     makeidCell.innerText = newRow.makeName;
     modelidCell.innerText = newRow.modelNameYear;
     mileageCell.innerText = newRow.vehicleMileage;
@@ -108,20 +108,20 @@ addRowToTable = (data) => {
     currentTable.appendChild(row);
 
     let selectMenuFullAddress = document.getElementById("mySelectFullAddress");
-    let optionFullAddress = document.createElement("option");
-    optionFullAddress.text = newRow.fullAddress ? newRow.fullAddress : "N/A";
-    optionFullAddress.value = newRow.locationID;
+    let optionFullAddress = document.createElement("optionFullAddress");
+    optionFullAddress.text = newRow.fullAddress;
+    optionFullAddress.value = newRow.vehicleID;
     selectMenuFullAddress.add(optionFullAddress);
 
     let selectMenuMakeName = document.getElementById("mySelectMakeName");
-    let optionMakeName = document.createElement("option");
+    let optionMakeName = document.createElement("optionMakeName");
     optionMakeName.text = newRow.makeName;
-    optionMakeName.value = newRow.makeID;
+    optionMakeName.value = newRow.vehicleID;
     selectMenuMakeName.add(optionMakeName);
 
     let selectMenuModelYear = document.getElementById("mySelectModelYear");
-    let optionModelYear = document.createElement("option");
+    let optionModelYear = document.createElement("optionModelYear");
     optionModelYear.text = newRow.modelYear;
-    optionModelYear.value = newRow.modelID;
+    optionModelYear.value = newRow.vehicleID;
     selectMenuModelYear.add(optionModelYear);
 }

@@ -412,28 +412,13 @@ app.delete('/delete-rental-ajax/', function(req,res,next){
 /* VEHICLES */
 app.get('/vehicles', function(req, res)
 {
-    let query1 = `
-    SELECT 
-        Vehicles.vehicleID, 
-        CASE 
-            WHEN Locations.address IS NULL AND Locations.city IS NULL AND Locations.state IS NULL THEN 'N/A'
-            ELSE CONCAT(COALESCE(Locations.address, ''), ', ', COALESCE(Locations.city, ''), ', ', COALESCE(Locations.state, ''))
-        END AS fullAddress, 
-        Makes.makeName, 
-        Makes.makeID, 
-        CONCAT(Models.modelName, ' (', Models.modelYear, ')') AS modelNameYear, 
-        Vehicles.mileage AS vehicleMileage 
-    FROM 
-        Vehicles 
-    LEFT JOIN Models ON Vehicles.modelID = Models.modelID 
-    LEFT JOIN Makes ON Vehicles.makeID = Makes.makeID 
-    LEFT JOIN Locations ON Vehicles.locationID = Locations.locationID;`;
+    let query1 = "SELECT Vehicles.vehicleID, CONCAT(Locations.address, ', ', Locations.city, ', ', Locations.state) AS fullAddress, Makes.makeName, Makes.makeID, CONCAT(Models.modelName, ' (', Models.modelYear, ')') AS modelNameYear, Vehicles.mileage AS vehicleMileage FROM Vehicles INNER JOIN Models ON Vehicles.modelID = Models.modelID INNER JOIN Makes ON Vehicles.makeID = Makes.makeID INNER JOIN Locations ON Vehicles.locationID = Locations.locationID;";
+    
+    let query2 = "SELECT * FROM Locations;";
 
-    let query2 = `SELECT * FROM Locations;`;
+    let query3 = "SELECT * FROM Makes;";
 
-    let query3 = `SELECT * FROM Makes;`;
-
-    let query4 = `SELECT * FROM Models;`;
+    let query4 = "SELECT * FROM Models;";
 
     db.pool.query(query1, function(error, rows, fields){
 
@@ -462,7 +447,7 @@ app.post('/add-vehicle-ajax', function(req, res)
 {
     // Capture the incoming data and parse it back to a JS object
     let data = req.body;
-    let locationid = data.locationid ? parseInt(data.locationid) : null
+    let locationid = parseInt(data.locationid)
     let makeid = parseInt(data.makeid)
     let modelid = parseInt(data.modelid)
     let mileage = parseInt(data.mileage)
@@ -478,40 +463,22 @@ app.post('/add-vehicle-ajax', function(req, res)
             console.log(error)
             res.sendStatus(400);
         }
-        else
-        {
-            // If there was no error, perform a SELECT *
-            query2 = `SELECT * FROM Vehicles;`;
-            db.pool.query(query2, function(error, rows, fields){
+        else {
 
-                // If there was an error on the second query, send a 400
-                if (error) {
-                    
-                    // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-                    console.log(error);
-                    res.sendStatus(400);
-                }
-                // If all went well, send rows.
-                else
-                {
-                    res.send(rows);
-                }
-            })
+            res.send(rows);
+
         }
     })
+        
 });
 
 
 app.post('/add-vehicles-form', function(req, res) {
     // Capture the incoming data and parse it back to a JS object
     let data = req.body;
-    let locationid = data['input-locationid'] ? parseInt(data['input-locationid']) : null;
-    let makeid = parseInt(data['input-makeid']);
-    let modelid = parseInt(data['input-modelid']);
-    let mileage = parseInt(data['input-mileage']);
     
     // Create the query and run it on the database
-    query1 = `INSERT INTO Vehicles (locationID, makeID, modelID, mileage) VALUES (${locationid}, ${makeid}, ${modelid}, ${mileage})`;
+    query1 = `INSERT INTO Vehicles (locationID, makeID, modelID, mileage) VALUES (${data['input-locationid']}, ${data['input-makeid']}, ${data['input-modelid']}, ${data['input-mileage']})`;
     db.pool.query(query1, function(error, rows, fields) {
     
         // Check to see if there was an error
@@ -535,7 +502,7 @@ app.post('/add-vehicles-form', function(req, res) {
 /* MAKES */
 app.get('/makes', function(req, res)
 {
-    let query1 = `SELECT * FROM Makes;`;
+    let query1 = "SELECT * FROM Makes;";
     db.pool.query(query1, function(error, rows, fields){
         res.render('makes', {data: rows});
     })

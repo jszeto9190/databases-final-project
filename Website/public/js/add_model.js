@@ -7,52 +7,43 @@
 // Code version: N/A
 
 // Get the objects we need to modify
-let addLocationForm = document.getElementById('add-location-form-ajax');
+let addModelForm = document.getElementById('add-model-form-ajax');
 
 // Modify the objects we need
-addLocationForm.addEventListener("submit", function (e) {
+addModelForm.addEventListener("submit", function (e) {
     
     // Prevent the form from submitting
     e.preventDefault();
 
     // Get form fields we need to get data from
-    let inputCity = document.getElementById("input-city");
-    let inputState = document.getElementById("input-state");
-    let inputAddress = document.getElementById("input-address");
-    let inputLocationVehicleCapacity = document.getElementById("input-locationvehiclecapacity");
+    let inputModelName = document.getElementById("input-modelname");
+    let inputModelYear = document.getElementById("input-modelyear");
 
     // Get the values from the form fields
-    let cityValue = inputCity.value;
-    let stateValue = inputState.value;
-    let addressValue = inputAddress.value;
-    let locationVehicleCapacityValue = parseInt(inputLocationVehicleCapacity.value);
-
-
+    let modelNameValue = inputModelName.value;
+    let modelYearValue = parseInt(inputModelYear.value);
+    console.log(modelNameValue)
+    console.log(modelYearValue)
     // Put our data we want to send in a javascript object
     let data = {
-        city: cityValue,
-        state: stateValue,
-        address: addressValue,
-        locationvehiclecapacity: locationVehicleCapacityValue
+        modelname: modelNameValue,
+        modelyear: modelYearValue
     }
     console.log(data)
     // Setup our AJAX request
     var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "/add-location-ajax", true);
+    xhttp.open("POST", "/add-model-ajax", true);
     xhttp.setRequestHeader("Content-type", "application/json");
 
     // Tell our AJAX request how to resolve
     xhttp.onreadystatechange = () => {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
-
             // Add the new data to the table
             addRowToTable(xhttp.response);
 
             // Clear the input fields for another transaction
-            inputCity.value = '';
-            inputState.value = '';
-            inputAddress.value = '';
-            inputLocationVehicleCapacity.value = '';
+            inputModelName.value = '';
+            inputModelYear.value = '';
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
             console.log("There was an error with the input.")
@@ -61,6 +52,7 @@ addLocationForm.addEventListener("submit", function (e) {
 
     // Send the request and wait for the response
     xhttp.send(JSON.stringify(data));
+    console.log(JSON.stringify(data))
 
 })
 
@@ -70,39 +62,32 @@ addLocationForm.addEventListener("submit", function (e) {
 addRowToTable = (data) => {
 
     // Get a reference to the current table on the page and clear it out.
-    let currentTable = document.getElementById("locations-table");
-
+    let currentTable = document.getElementById("models-table");
     // Get the location where we should insert the new row (end of table)
     let newRowIndex = currentTable.rows.length;
-
+    console.log(data)
     // Get a reference to the new row from the database query (last object)
     let parsedData = JSON.parse(data);
     let newRow = parsedData[parsedData.length - 1]
 
     // Create a row and 4 cells
     let row = document.createElement("TR");
-    let locationidCell = document.createElement("TD");
-    let cityCell = document.createElement("TD");
-    let stateCell = document.createElement("TD");
-    let addressCell = document.createElement("TD");
-    let locationvehiclecapacityCell = document.createElement("TD");
+    let modelidCell = document.createElement("TD");
+    let modelnameCell = document.createElement("TD");
+    let modelyearCell = document.createElement("TD");
 
     // Fill the cells with correct data
-    locationidCell.innerText = newRow.locationID;
-    cityCell.innerText = newRow.city;
-    stateCell.innerText = newRow.state;
-    addressCell.innerText = newRow.address;
-    locationvehiclecapacityCell.innerText = newRow.locationVehicleCapacity;
+    modelidCell.innerText = newRow.modelID;
+    modelnameCell.innerText = newRow.modelName;
+    modelyearCell.innerText = newRow.modelYear;
 
     // Add the cells to the row
-    row.appendChild(locationidCell);
-    row.appendChild(cityCell);
-    row.appendChild(stateCell);
-    row.appendChild(addressCell);
-    row.appendChild(locationvehiclecapacityCell);
-    
+    row.appendChild(modelidCell);
+    row.appendChild(modelnameCell);
+    row.appendChild(modelyearCell);
+
     // Add a row attribute so the deleteRow function can find a newly added row
-    row.setAttribute('data-value', newRow.locationID);
+    row.setAttribute('data-value', newRow.modelID);
 
     // Add the row to the table
     currentTable.appendChild(row);

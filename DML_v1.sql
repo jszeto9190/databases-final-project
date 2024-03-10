@@ -23,6 +23,8 @@ SELECT * FROM DriversRentals;
 INSERT INTO DriversRentals (driverID, rentalID) VALUES (@'${data.driverid}', @'${data.rentalid}');
 -- Input new user created data into DriversRentals Table:
 INSERT INTO DriversRentals (driverID, rentalID) VALUES (@'${data[input-driverid]}', @'${data[input-rentalid]}');
+-- Delete row from DriversRentals Table by driverIDRentalID:
+DELETE FROM DriversRentals WHERE driverIDRentalID = ?;
 -- Display corresponding driver information in a dropdown for a certain driverID in DriversRentals Table:
 SELECT driverID, CONCAT(firstName, " ",middleName,  " ", lastName) AS fullName 
 FROM DriversRentals 
@@ -46,7 +48,7 @@ SELECT * FROM Rentals INNER JOIN Vehicles ON vehicleID = vehicleID;
 
 -- Vehicles Table
 -- Display Rentals Table:
-SELECT * FROM Vehicles;
+SELECT Vehicles.vehicleID, CONCAT(Locations.address, ', ', Locations.city, ', ', Locations.state) AS fullAddress, Makes.makeName, Makes.makeID, CONCAT(Models.modelName, ' (', Models.modelYear, ')') AS modelNameYear, Vehicles.mileage AS vehicleMileage FROM Vehicles INNER JOIN Models ON Vehicles.modelID = Models.modelID INNER JOIN Makes ON Vehicles.makeID = Makes.makeID INNER JOIN Locations ON Vehicles.locationID = Locations.locationID;;
 -- Input data from database into Vehicles Table:
 INSERT INTO Vehicles (locationID, makeID, modelID, mileage) VALUES (@${data.locationid}, @${data.makeid}, @${data.modelid}, @${data.mileage});
 -- Input new user created data into Vehicles Table:

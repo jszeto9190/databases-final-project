@@ -1,0 +1,52 @@
+<!-- Citation for this file:
+// Date: 2/18/2024
+// URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%200%20-%20Setting%20Up%20Node.js
+// Application: Visual Studio Code, version 1.85.1 
+// Type: starter/example code provided by Dr. Michael Curry, starter/example code is filled in/modified by Jason Szeto
+// Author(s): Dr. Michael Curry, Jason Szeto
+// Code version: N/A -->
+
+<!-- models.hbs -->
+
+{{!-- Create a table --}}
+<h2>Table of Models</h2>
+<table id="models-table">
+
+    {{!-- Header section --}}
+    <thead>
+        <tr>
+            <!-- Modify column names to display -->
+            <th>Model ID</th>
+            <th>Model Name</th>
+            <th>Model Year</th>
+        </tr>
+    </thead>
+
+    {{!-- Body section --}}
+    <tbody>
+        {{!-- For each row, print the SQL data in order --}}
+        {{#each data}}
+        <tr data-value={{this.modelID}}>
+            <td>{{this.modelID}}</td>
+            <td>{{this.modelName}}</td>
+            <td>{{this.modelYear}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{!-- Form to add a record to the table  --}}
+<h2>Add a New Model</h2>
+<form id="add-model-form-ajax">  
+    <label for="input-modelname">Model Name: </label>
+    <input type="text" name="input-modelname" id="input-modelname">
+
+    <label for="input-modelyear">Model Year: </label>
+    <input type="number" name="input-modelyear" id="input-modelyear">
+    
+    <input type="submit">
+</form>
+
+{{!-- Embed our javascript to handle the DOM manipulation and AJAX request --}}
+<script src="./js/add_model.js"></script>
+

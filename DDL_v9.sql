@@ -29,7 +29,7 @@ CREATE TABLE `Drivers` (
   `middleName` varchar(25) DEFAULT NULL,
   `lastName` varchar(25) NOT NULL,
   PRIMARY KEY (`driverID`)
-) ENGINE=InnoDB AUTO_INCREMENT=636560 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=636563 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +38,7 @@ CREATE TABLE `Drivers` (
 
 LOCK TABLES `Drivers` WRITE;
 /*!40000 ALTER TABLE `Drivers` DISABLE KEYS */;
-INSERT INTO `Drivers` VALUES (3,'weezer7@aol.com','Joe',NULL,'Romero'),(636550,'newuser@gmail.xyz','Joe','K','Jons'),(636556,'Smith@outlook.com','Smith','','Ron'),(636559,'flatrobot@yahoo.com','Jason','','Szeto');
+INSERT INTO `Drivers` VALUES (3,'joeshmo@js.com','Joe',NULL,'Romero'),(636550,'joekg@gmail.com','Joe','K','Jons'),(636556,'Smith@outlook.com','Smith','','Ron'),(636562,'romeofg@aol.com','Romeo','','Goo');
 /*!40000 ALTER TABLE `Drivers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,7 +58,7 @@ CREATE TABLE `DriversRentals` (
   KEY `fk_DriversRentals_Rentals1_idx` (`rentalID`),
   CONSTRAINT `fk_DriversRentals_Drivers1` FOREIGN KEY (`driverID`) REFERENCES `Drivers` (`driverID`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_DriversRentals_Rentals1` FOREIGN KEY (`rentalID`) REFERENCES `Rentals` (`rentalID`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +67,6 @@ CREATE TABLE `DriversRentals` (
 
 LOCK TABLES `DriversRentals` WRITE;
 /*!40000 ALTER TABLE `DriversRentals` DISABLE KEYS */;
-INSERT INTO `DriversRentals` VALUES (3,3,3);
 /*!40000 ALTER TABLE `DriversRentals` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,7 +84,7 @@ CREATE TABLE `Locations` (
   `address` varchar(100) NOT NULL,
   `locationVehicleCapacity` int(11) NOT NULL,
   PRIMARY KEY (`locationID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,7 +93,7 @@ CREATE TABLE `Locations` (
 
 LOCK TABLES `Locations` WRITE;
 /*!40000 ALTER TABLE `Locations` DISABLE KEYS */;
-INSERT INTO `Locations` VALUES (1,'Los Angeles','California','232 Hollywood Blvd',40),(2,'New York','New York','1923 1st Street',50),(3,'New York','New York','1923 1st Street',50),(4,'Orlando','Florida','3934 Alligator Way',60);
+INSERT INTO `Locations` VALUES (1,'Los Angeles','California','232 Hollywood Blvd',40),(2,'New York','New York','1923 1st Street',50),(3,'New York','New York','1923 1st Street',50),(4,'Orlando','Florida','3934 Alligator Way',60),(8,'Elk Grove','California','301 Appleseed Way',11),(9,'San Leandro','CA','232 Winner Circle',239);
 /*!40000 ALTER TABLE `Locations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -109,7 +108,7 @@ CREATE TABLE `Makes` (
   `makeID` int(11) NOT NULL AUTO_INCREMENT,
   `makeName` varchar(30) NOT NULL,
   PRIMARY KEY (`makeID`)
-) ENGINE=InnoDB AUTO_INCREMENT=485447 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=485449 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -118,7 +117,7 @@ CREATE TABLE `Makes` (
 
 LOCK TABLES `Makes` WRITE;
 /*!40000 ALTER TABLE `Makes` DISABLE KEYS */;
-INSERT INTO `Makes` VALUES (1,'Toyota'),(2,'Tesla'),(3,'Honda'),(4,'Ford'),(485445,'Nissan'),(485446,'Nissan');
+INSERT INTO `Makes` VALUES (1,'Toyota'),(2,'Tesla'),(3,'Honda'),(4,'Ford'),(485448,'Lamborgini');
 /*!40000 ALTER TABLE `Makes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -134,7 +133,7 @@ CREATE TABLE `Models` (
   `modelName` varchar(30) NOT NULL,
   `modelYear` int(11) NOT NULL,
   PRIMARY KEY (`modelID`)
-) ENGINE=InnoDB AUTO_INCREMENT=485512 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=485514 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -143,7 +142,7 @@ CREATE TABLE `Models` (
 
 LOCK TABLES `Models` WRITE;
 /*!40000 ALTER TABLE `Models` DISABLE KEYS */;
-INSERT INTO `Models` VALUES (1,'Sienna',2023),(2,'Cybertruck',2024),(3,'Civic',2023),(4,'F150',2022);
+INSERT INTO `Models` VALUES (1,'Sienna',2023),(2,'Cybertruck',2024),(3,'Civic',2023),(4,'F150',2022),(485513,'Urus',2022);
 /*!40000 ALTER TABLE `Models` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -195,7 +194,7 @@ CREATE TABLE `Vehicles` (
   CONSTRAINT `fk_Vehicles_Locations1` FOREIGN KEY (`locationID`) REFERENCES `Locations` (`locationID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Vehicles_Makes1` FOREIGN KEY (`makeID`) REFERENCES `Makes` (`makeID`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_Vehicles_Models1` FOREIGN KEY (`modelID`) REFERENCES `Models` (`modelID`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -204,7 +203,7 @@ CREATE TABLE `Vehicles` (
 
 LOCK TABLES `Vehicles` WRITE;
 /*!40000 ALTER TABLE `Vehicles` DISABLE KEYS */;
-INSERT INTO `Vehicles` VALUES (1,1,1,1,15451),(2,2,2,2,14625),(3,3,3,3,6512),(4,4,4,4,6444);
+INSERT INTO `Vehicles` VALUES (1,1,1,1,15451),(2,2,2,2,14625),(3,3,3,3,6512),(4,4,4,4,6444),(38,3,1,9,3),(39,1,2,9,3);
 /*!40000 ALTER TABLE `Vehicles` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -217,4 +216,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-04 21:56:59
+-- Dump completed on 2024-03-09 20:47:19
