@@ -290,33 +290,55 @@ app.delete('/delete-driver-rental-ajax/', function(req,res,next){
 
 
 /* RENTALS */
-  app.get('/rentals', function(req, res)
-  {   
-      let query1;
+app.get('/rentals', function(req, res)
+{   
+    let query1 = `
+    SELECT 
+        Rentals.rentalID,
+        CONCAT(Makes.makeName, ' ', Models.modelName, ' (', Models.modelYear,', ', Vehicles.mileage, ' miles) ') AS makeNameModelNameYear,
+        DATE_FORMAT(Rentals.startDate, '%Y-%m-%d') AS rentalStartDate,
+        DATE_FORMAT(Rentals.endDate, '%Y-%m-%d') AS rentalEndDate
+    FROM
+        Rentals
+    LEFT JOIN Vehicles ON Rentals.vehicleID = Vehicles.vehicleID
+    LEFT JOIN Makes ON Vehicles.makeID = Makes.makeID
+    LEFT JOIN Models ON Vehicles.modelID = Models.modelID;`;
 
-      if (req.query.startdate === undefined)
-      {
-          query1 = 'SELECT * FROM Rentals;';
-      }
-      else
-      {
-          query1 = `SELECT * FROM Rentals WHERE startDate LIKE "${req.query.startdate}%"`
-      }
+    let query2 = `
+    SELECT 
+        Vehicles.vehicleID,
+        Makes.makeName,
+        Models.modelName,
+        Models.modelYear,
+        Vehicles.mileage
+    FROM
+        Vehicles
+    JOIN Makes ON Vehicles.makeID = Makes.makeID
+    JOIN Models ON Vehicles.modelID = Models.modelID;`;
 
-      db.pool.query(query1, function(error, rows, fields){    // Execute the query
+        db.pool.query(query1, function(error, rows, fields){    // Execute the query
+          
+            let rentalData = rows;
 
-          res.render('rentals', {data: rows});                  // Render the rentals.hbs file, and also send the renderer
-      })                                                      // an object where 'data' is equal to the 'rows' we
-  });                                                         // received back from the query
+            db.pool.query(query2, function(error, rows, fields){
+
+                let vehiclesData = rows;
+
+                res.render('rentals', {data: rentalData, vehiclesData: vehiclesData });                  // Render the rentals.hbs file, and also send the renderer
+            })
+        })                                                  // an object where 'data' is equal to the 'rows' we
+});                                                         // received back from the query
 
 app.post('/add-rental-ajax', function(req, res) 
 {
   // Capture the incoming data and parse it back to a JS object
   let data = req.body;
   let vehicleid = parseInt(data.vehicleid);
+  let startdate = data.startdate;
+  let enddate = data.enddate;
 
   // Create the query and run it on the database
-  query1 = `INSERT INTO Rentals (vehicleID, startDate, endDate) VALUES (${vehicleid}, ${data.startdate}, ${data.enddate})`;
+  query1 = `INSERT INTO Rentals (vehicleID, startDate, endDate) VALUES (${vehicleid}, '${startdate}', '${enddate}')`;
   db.pool.query(query1, function(error, rows, fields){
 
       // Check to see if there was an error
@@ -353,10 +375,12 @@ app.post('/add-rental-ajax', function(req, res)
 app.post('/add-rental-form', function(req, res) {
   // Capture the incoming data and parse it back to a JS object
   let data = req.body;
-  let vehicleid = parseInt(data['input-vehicleid']);
+  let vehicleid = parseInt(data['input-makeNameModelNameYear']);
+  let startdate = data['input-startdate'];
+  let enddate = data['input-enddate'];
  
   // Create the query and run it on the database
-  query1 = `INSERT INTO Rentals (vehicleID, startDate, endDate) VALUES (${vehicleid}, ${data['input-startdate']}, ${data['input-enddate']})`;
+  query1 = `INSERT INTO Rentals (vehicleID, startDate, endDate) VALUES (${vehicleid}, '${startdate}', '${enddate}')`;
   db.pool.query(query1, function(error, rows, fields) {
   
       // Check to see if there was an error
@@ -375,37 +399,6 @@ app.post('/add-rental-form', function(req, res) {
   })
   });
 
-app.delete('/delete-rental-ajax/', function(req,res,next){
-  let data = req.body;
-  let rentalID = parseInt(data.driverid);
-  let deleteRentals = `DELETE FROM Rentals WHERE rentalID = ?`;
-  let deleteDriversRentals= `DELETE FROM DriversRentals WHERE rentalID = ?`;
-
-        // Run the 1st query
-        db.pool.query(deleteRentals, [rentalID], function(error, rows, fields){
-            if (error) {
-
-            // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-            console.log(error);
-            res.sendStatus(400);
-            }
-
-            else
-            {
-                // Run the second query
-                db.pool.query(deleteDriversRentals, [rentalID], function(error, rows, fields) {
-
-                    if (error) {
-                        console.log(error);
-                        res.sendStatus(400);
-                    } else {
-                        res.sendStatus(204);
-                    }
-                })
-            }
-})});
-
-
 
 
 
@@ -420,7 +413,6 @@ app.get('/vehicles', function(req, res)
             ELSE CONCAT(COALESCE(Locations.address, ''), ', ', COALESCE(Locations.city, ''), ', ', COALESCE(Locations.state, ''))
         END AS fullAddress, 
         Makes.makeName, 
-        Makes.makeID, 
         CONCAT(Models.modelName, ' (', Models.modelYear, ')') AS modelNameYear, 
         Vehicles.mileage AS vehicleMileage 
     FROM 
@@ -505,9 +497,9 @@ app.post('/add-vehicle-ajax', function(req, res)
 app.post('/add-vehicles-form', function(req, res) {
     // Capture the incoming data and parse it back to a JS object
     let data = req.body;
-    let locationid = data['input-locationid'] ? parseInt(data['input-locationid']) : null;
-    let makeid = parseInt(data['input-makeid']);
-    let modelid = parseInt(data['input-modelid']);
+    let locationid = data['input-fullAddress'] ? parseInt(data['input-fullAddress']) : null;
+    let makeid = parseInt(data['input-makeName']);
+    let modelid = parseInt(data['input-modelYear']);
     let mileage = parseInt(data['input-mileage']);
     
     // Create the query and run it on the database

@@ -16,12 +16,12 @@ addRentalForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
     // Get form fields we need to get data from
-    let inputVehicleID = document.getElementById("input-vehicleid");
+    let inputVehicleID = document.getElementById("mySelectMakeNameModelNameYear");
     let inputStartDate = document.getElementById("input-startdate");
     let inputEndDate = document.getElementById("input-enddate");
 
     // Get the values from the form fields
-    let vehicleIDValue = inputVehicleID.value;
+    let vehicleIDValue = parseInt(inputVehicleID.value);
     let startDateValue = inputStartDate.value;
     let endDateValue = inputEndDate.value;
 
@@ -31,7 +31,7 @@ addRentalForm.addEventListener("submit", function (e) {
         startdate: startDateValue,
         enddate: endDateValue,
     }
-    
+    console.log(data)
     // Setup our AJAX request
     var xhttp = new XMLHttpRequest();
     xhttp.open("POST", "/add-rental-ajax", true);
@@ -85,27 +85,25 @@ addRowToTable = (data) => {
 
     // Fill the cells with correct data
     rentalidCell.innerText = newRow.rentalID;
-    vehicleidCell.innerText = newRow.vehicleID;
-    startdateCell.innerText = newRow.startDate;
-    enddateCell.innerText = newRow.endDate;
-
-    deleteCell = document.createElement("button");
-    deleteCell.innerHTML = "Delete";
-    deleteCell.onclick = function(){
-        deleteRental(newRow.rentalID);
-    };
+    vehicleidCell.innerText = newRow.makeNameModelNameYear;
+    startdateCell.innerText = newRow.startDate.split('T')[0];
+    enddateCell.innerText = newRow.endDate.split('T')[0];
 
     // Add the cells to the row
     row.appendChild(rentalidCell);
     row.appendChild(vehicleidCell);
     row.appendChild(startdateCell);
     row.appendChild(enddateCell);
-
-    row.appendChild(deleteCell);
     
     // Add a row attribute so the deleteRow function can find a newly added row
     row.setAttribute('data-value', newRow.rentalID);
 
     // Add the row to the table
     currentTable.appendChild(row);
+
+    let selectMenuMakeNameModelNameYear = document.getElementById("mySelectMakeNameModelNameYear");
+    let optionMakeNameModelNameYear = document.createElement("option");
+    optionMakeNameModelNameYear.text = newRow.makeNameModelNameYear;
+    optionMakeNameModelNameYear.value = newRow.vehicleID;
+    selectMenuMakeNameModelNameYear.add(optionMakeNameModelNameYear);
 }

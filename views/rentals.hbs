@@ -15,10 +15,9 @@
         <tr>
             <!-- Modify column names to display -->
             <th>Rental ID</th>
-            <th>Vehicle ID</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Delete</th>
+            <th>Vehicle</th>
+            <th>Start Date (YYYY-MM-DD)</th>
+            <th>End Date (YYYY-MM-DD)</th>
         </tr>
     </thead>
 
@@ -29,24 +28,30 @@
         {{#each data}}
         <tr data-value={{this.rentalID}}>
             <td>{{this.rentalID}}</td>
-            <td>{{this.vehicleID}}</td>
-            <td>{{this.startDate}}</td>
-            <td>{{this.endDate}}</td>
-            <td><button onclick="deleteRental({{this.rentalID}})">Delete</button></td>
+            <td>{{this.makeNameModelNameYear}}</td>
+            <td>{{this.rentalStartDate}}</td>
+            <td>{{this.rentalEndDate}}</td>
         </tr>
         {{/each}}
     </tbody>
 </table>
-<script src="./js/delete_rental.js"></script>
 
 {{!-- Form to add a record to the table  --}}
 <h2>Add a New Rental</h2>
-<form id="add-rental-form-ajax">  
+<form id="add-rental-form-ajax">
+    <label for="input-makeNameModelNameYear">Vehicle: </label>
+    <select name="input-makeNameModelNameYear" id="mySelectMakeNameModelNameYear">
+        <option value="test">Make a Selection</option>
+        {{#each vehiclesData}}
+        <option value="{{this.vehicleID}}">{{this.makeName}} {{this.modelName}} ({{this.modelYear}}, {{this.mileage}} miles)</option>
+        {{/each}}
+    </select>
+
     <label for="input-startdate">Start Date: </label>
-    <input type="date" name="input-startdate" id="input-startdate" placeholder="required">
+    <input type="date" name="input-startdate" id="input-startdate">
 
     <label for="input-enddate">End Date: </label>
-    <input type="date" name="input-enddate" id="input-enddate" placeholder="required">
+    <input type="date" name="input-enddate" id="input-enddate">
 
     <input type="submit">
 </form>
