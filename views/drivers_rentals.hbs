@@ -8,7 +8,7 @@
 
 <!-- drivers_rentals.hbs -->
 {{!-- Create a table --}}
-<h2>Table of DriversRentals</h2>
+<h2>Table of Drivers and Their Rentals</h2>
 <table id="driversrentals-table">
 
     {{!-- Header section --}}
@@ -16,8 +16,8 @@
         <tr>
             <!-- Modify column names to display -->
             <th>Driver and Rental ID</th>
-            <th>Driver ID</th>
-            <th>Rental ID</th>
+            <th>Driver Information</th>
+            <th>Rental Information</th>
             <th>Delete</th>
         </tr>
     </thead>
@@ -28,8 +28,8 @@
         {{#each data}}
         <tr data-value={{this.driverIDRentalID}}>
             <td>{{this.driverIDRentalID}}</td>
-            <td>{{this.driverID}}</td>
-            <td>{{this.rentalID}}</td>
+            <td>{{this.driverFullNameEmail}}</td>
+            <td>{{this.makeNameModelNameYearDate}}</td>
             <td><button onclick="deleteDriverRental({{this.driverIDRentalID}})">Delete</button></td>
         </tr>
         {{/each}}
@@ -38,13 +38,23 @@
 <script src="./js/delete_driver_rental.js"></script>
 
 {{!-- Form to add a record to the table  --}}
-<h2>Add a New Driver Rental</h2>
-<form id="add-driver-rental-form-ajax">  
-    <label for="input-driverid">Driver ID: </label>
-    <input type="number" name="input-driverid" id="input-driverid" placeholder="required">
+<h2>Match a Driver to a Rental</h2>
+<form id="add-driver-rental-form-ajax">
+    <label for="input-fullDriverInfo">Drivers: </label>
+    <select name="input-fullDriverInfo" id="mySelectFullDriverInfo">
+        <option value="test">Make a Selection</option>
+        {{#each driversData}}
+        <option value="{{this.driverID}}">{{this.firstName}} {{this.middleName}} {{this.lastName}} ({{this.email}})</option>
+        {{/each}}
+    </select>
 
-    <label for="input-rentalid">Rental ID: </label>
-    <input type="number" name="input-rentalid" id="input-rentalid" placeholder="required">
+    <label for="input-fullRentalInfo">Rentals: </label>
+    <select name="input-fullRentalInfo" id="mySelectFullRentalInfo">
+        <option value="test">Make a Selection</option>
+        {{#each rentalsData}}
+        <option value="{{this.rentalID}}">{{this.makeNameModelNameYear}} from {{this.rentalStartDate}} to {{this.rentalEndDate}}</option>
+        {{/each}}
+    </select>  
 
     <input type="submit">
 </form>

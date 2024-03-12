@@ -192,9 +192,49 @@ app.put('/put-driver-ajax', function(req,res,next){
 /* DRIVERSRENTALS */
 app.get('/driversrentals', function(req, res)
     {
-        let query1 = "SELECT * FROM DriversRentals;";
+        let query1 = `
+        SELECT
+            DriversRentals.driverIDRentalID,
+            CONCAT(Drivers.firstName, ' ', COALESCE(Drivers.middleName, ''), ' ', Drivers.lastName, ' (', Drivers.email, ') ') AS driverFullNameEmail,
+            CONCAT(Makes.makeName, ' ', Models.modelName, ' (', Models.modelYear,', ', Vehicles.mileage, ' miles) from ', DATE_FORMAT(Rentals.startDate, '%Y-%m-%d'), ' to ', DATE_FORMAT(Rentals.endDate, '%Y-%m-%d')) AS makeNameModelNameYearDate
+        FROM
+            DriversRentals
+        LEFT JOIN Rentals ON DriversRentals.rentalID = Rentals.rentalID
+        LEFT JOIN Drivers ON DriversRentals.driverID = Drivers.driverID
+        LEFT JOIN Vehicles ON Rentals.vehicleID = Vehicles.vehicleID
+        LEFT JOIN Makes ON Vehicles.makeID = Makes.makeID
+        LEFT JOIN Models ON Vehicles.modelID = Models.modelID;`;
+        
+        let query2 = `
+        SELECT * FROM Drivers;`;
+
+        let query3 = `
+        SELECT 
+            Rentals.rentalID,
+            CONCAT(Makes.makeName, ' ', Models.modelName, ' (', Models.modelYear,', ', Vehicles.mileage, ' miles) ') AS makeNameModelNameYear,
+            DATE_FORMAT(Rentals.startDate, '%Y-%m-%d') AS rentalStartDate,
+            DATE_FORMAT(Rentals.endDate, '%Y-%m-%d') AS rentalEndDate
+        FROM
+            Rentals
+        LEFT JOIN Vehicles ON Rentals.vehicleID = Vehicles.vehicleID
+        LEFT JOIN Makes ON Vehicles.makeID = Makes.makeID
+        LEFT JOIN Models ON Vehicles.modelID = Models.modelID;`;
+
         db.pool.query(query1, function(error, rows, fields){
-            res.render('drivers_rentals', {data: rows});
+
+            let driversRentalsdata = rows
+
+            db.pool.query(query2, function(error, rows, fields){
+            
+            let driversData = rows;
+                
+                db.pool.query(query3, function(error, rows, fields){
+
+                    let rentalsData = rows;
+
+                    res.render('drivers_rentals', {data: driversRentalsdata, driversData: driversData, rentalsData: rentalsData});
+                })
+            })
         })
     });
 
@@ -398,6 +438,32 @@ app.post('/add-rental-form', function(req, res) {
            }
   })
   });
+
+app.put('/put-driver-ajax', function(req,res,next){
+    let data = req.body;
+    console.log(data)
+    let email = data.email;
+    let driverid = data.driverid;
+
+    let queryUpdateEmail = `UPDATE Drivers SET email = ? WHERE driverID = ?`;
+
+          // Run the 1st query
+          db.pool.query(queryUpdateEmail, [email, driverid], function(error, rows, fields){
+              if (error) {
+  
+              // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+              console.log(error);
+              res.sendStatus(400);
+              }
+  
+              // If there was no error, we run our second query and return that data so we can use it to update the people's
+              // table on the front-end
+              else
+              {
+              res.send(rows);
+              console.log(rows);
+              }
+  })});
 
 
 

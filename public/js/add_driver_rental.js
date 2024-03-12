@@ -16,8 +16,8 @@ addDriverRentalForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
     // Get form fields we need to get data from
-    let inputDriverID = document.getElementById("input-driverid");
-    let inputRentalID = document.getElementById("input-rentalid");
+    let inputDriverID = document.getElementById("mySelectFullDriverInfo");
+    let inputRentalID = document.getElementById("mySelectFullRentalInfo");
 
     // Get the values from the form fields
     let driverIDValue = inputDriverID.value;
@@ -42,8 +42,8 @@ addDriverRentalForm.addEventListener("submit", function (e) {
             addRowToTable(xhttp.response);
 
             // Clear the input fields for another transaction
-            inputDriverID.value = 0;
-            inputRentalID.value = 0;
+            inputDriverID.value = '';
+            inputRentalID.value = '';
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
             console.log("There was an error with the input.")
@@ -80,8 +80,8 @@ addRowToTable = (data) => {
 
     // Fill the cells with correct data
     driverIDRentalIDCell.innerText = newRow.driverIDRentalID;
-    driverIDCell.innerText = newRow.driverID;
-    rentalIDCell.innerText = newRow.rentalID;
+    driverIDCell.innerText = newRow.driverFullNameEmail;
+    rentalIDCell.innerText = newRow.makeNameModelNameYearDate;
 
     deleteCell = document.createElement("button");
     deleteCell.innerHTML = "Delete";
@@ -101,4 +101,16 @@ addRowToTable = (data) => {
 
     // Add the row to the table
     currentTable.appendChild(row);
+
+    let selectMenuFullDriverInfo = document.getElementById("mySelectFullDriverInfo");
+    let optionFullDriverInfo = document.createElement("option");
+    optionFullDriverInfo.text = newRow.driverFullNameEmail;
+    optionFullDriverInfo.value = newRow.driverID;
+    selectMenuFullDriverInfo.add(optionFullDriverInfo);
+
+    let selectMenuFullRentalInfo = document.getElementById("mySelectFullRentalInfo");
+    let optionFullRentalInfo = document.createElement("option");
+    optionFullRentalInfo.text = newRow.makeNameModelNameYearDate;
+    optionFullRentalInfo.value = newRow.rentalID;
+    selectMenuFullRentalInfo.add(optionFullRentalInfo);
 }
