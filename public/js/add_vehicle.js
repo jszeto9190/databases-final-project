@@ -124,4 +124,5 @@ addRowToTable = (data) => {
     optionModelYear.text = newRow.modelYear;
     optionModelYear.value = newRow.modelID;
     selectMenuModelYear.add(optionModelYear);
+    location.reload()
 }

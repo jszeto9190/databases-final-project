@@ -81,8 +81,6 @@ addRowToTable = (data) => {
     let startdateCell = document.createElement("TD");
     let enddateCell = document.createElement("TD");
 
-    let deleteCell = document.createElement("TD");
-
     // Fill the cells with correct data
     rentalidCell.innerText = newRow.rentalID;
     vehicleidCell.innerText = newRow.makeNameModelNameYear;
@@ -106,4 +104,5 @@ addRowToTable = (data) => {
     optionMakeNameModelNameYear.text = newRow.makeNameModelNameYear;
     optionMakeNameModelNameYear.value = newRow.vehicleID;
     selectMenuMakeNameModelNameYear.add(optionMakeNameModelNameYear);
+    location.reload()
 }

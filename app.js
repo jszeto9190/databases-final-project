@@ -163,7 +163,6 @@ app.delete('/delete-driver-ajax/', function(req,res,next){
 
 app.put('/put-driver-ajax', function(req,res,next){
     let data = req.body;
-    console.log(data)
     let email = data.email;
     let driverid = data.driverid;
 
@@ -195,6 +194,7 @@ app.get('/driversrentals', function(req, res)
         let query1 = `
         SELECT
             DriversRentals.driverIDRentalID,
+            Drivers.driverID,
             CONCAT(Drivers.firstName, ' ', COALESCE(Drivers.middleName, ''), ' ', Drivers.lastName, ' (', Drivers.email, ') ') AS driverFullNameEmail,
             CONCAT(Makes.makeName, ' ', Models.modelName, ' (', Models.modelYear,', ', Vehicles.mileage, ' miles) from ', DATE_FORMAT(Rentals.startDate, '%Y-%m-%d'), ' to ', DATE_FORMAT(Rentals.endDate, '%Y-%m-%d')) AS makeNameModelNameYearDate
         FROM
@@ -326,7 +326,31 @@ app.delete('/delete-driver-rental-ajax/', function(req,res,next){
                 }
             })});
 
+app.put('/put-driver-rental-ajax', function(req,res,next){
+    let data = req.body;
+    let rentalid = data.rentalid;
+    let driveridrentalid = data.driveridrentalid;
 
+    let queryUpdateRental = `UPDATE DriversRentals SET rentalID = ? WHERE driverIDRentalID = ?`;
+
+            // Run the 1st query
+            db.pool.query(queryUpdateRental, [rentalid, driveridrentalid], function(error, rows, fields){
+                if (error) {
+    
+                // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+                console.log(error);
+                res.sendStatus(400);
+                }
+    
+                // If there was no error, we run our second query and return that data so we can use it to update the people's
+                // table on the front-end
+                else
+                {
+                res.send(rows);
+                console.log(rows);
+                }
+    })});
+            
 
 
 /* RENTALS */

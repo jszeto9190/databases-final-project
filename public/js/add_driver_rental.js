@@ -52,7 +52,6 @@ addDriverRentalForm.addEventListener("submit", function (e) {
     console.log(data)
     // Send the request and wait for the response
     xhttp.send(JSON.stringify(data));
-
 })
 
 
@@ -113,4 +112,6 @@ addRowToTable = (data) => {
     optionFullRentalInfo.text = newRow.makeNameModelNameYearDate;
     optionFullRentalInfo.value = newRow.rentalID;
     selectMenuFullRentalInfo.add(optionFullRentalInfo);
+
+    location.reload()
 }

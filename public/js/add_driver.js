@@ -120,5 +120,5 @@ addRowToTable = (data) => {
     let optionDriver = document.createElement("option");
     optionDriver.text = newRow.firstName + ' ' +  newRow.middleName + ' ' +  newRow.lastName;
     optionDriver.value = newRow.driverID;
-    selectMenuDriver.add(option);
+    selectMenuDriver.add(optionDriver);
 }

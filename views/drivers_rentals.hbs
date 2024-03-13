@@ -61,3 +61,26 @@
 {{!-- Embed our javascript to handle the DOM manipulation and AJAX request --}}
 <script src="./js/add_driver_rental.js"></script>
 
+<h2>Update A Driver's Corresponding Rental </h2>
+<form id="update-driver-rental-form-ajax">
+
+    <label for="input-driverinformation"> (Driver and Rental ID) Driver Information: </label>
+    <select name="input-driverinformation" id="mySelectDriverInformation">
+        <option value="test">Select a Driver</option>
+        {{#each data}}
+        <option value="{{this.driverIDRentalID}}">({{this.driverIDRentalID}}) {{this.driverFullNameEmail}}</option>
+        {{/each}}
+    </select>
+
+    <label for="input-rentalinformation">Rental Information: </label>
+    <select name="input-rentalinformation" id="mySelectRentalInformation">
+        <option value="test">Select a Rental</option>
+        {{#each rentalsData}}
+        <option value="{{this.rentalID}}">{{this.makeNameModelNameYear}} from {{this.rentalStartDate}} to {{this.rentalEndDate}}</option>
+        {{/each}}
+    </select>
+    
+    <input type="submit">
+</form>
+
+<script src="./js/update_driver_rental.js"></script>
