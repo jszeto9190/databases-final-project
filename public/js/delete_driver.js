@@ -45,4 +45,5 @@ function deleteRow(driverID){
             break;
        }
     }
+    location.reload()
 }

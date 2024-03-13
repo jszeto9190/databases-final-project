@@ -73,3 +73,27 @@
 </form>
 {{!-- Embed our javascript to handle the DOM manipulation and AJAX request --}}
 <script src="./js/add_vehicle.js"></script>
+
+<h2>Update A Vehicle's Location </h2>
+<form id="update-vehicle-form-ajax">
+
+    <label for="input-vehicleinformation"> Make Name, Model(Year), Mileage: </label>
+    <select name="input-vehicleinformation" id="mySelectVehicleInformation">
+        <option value="test">Select a Vehicle</option>
+        {{#each data}}
+        <option value="{{this.vehicleID}}">{{this.makeName}} {{this.modelNameYear}}, {{this.vehicleMileage}} miles</option>
+        {{/each}}
+    </select>
+
+    <label for="input-locationinformation">New Location: </label>
+    <select name="input-locationinformation" id="mySelectLocationInformation">
+        <option value="">None</option>
+        {{#each data}}
+        <option value="{{this.vehicleID}}">{{this.fullAddress}}</option>
+        {{/each}}
+    </select>
+    
+    <input type="submit">
+</form>
+
+<script src="./js/update_vehicle.js"></script>
