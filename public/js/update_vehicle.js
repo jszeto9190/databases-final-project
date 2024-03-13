@@ -39,7 +39,6 @@ updateVehicleForm.addEventListener("submit", function (e) {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
 
             // Add the new data to the table
-            console.log(xhttp.response)
             updateRow(xhttp.response, parseInt(vehicleIDValue), parseInt(locationIDValue));
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
@@ -49,13 +48,11 @@ updateVehicleForm.addEventListener("submit", function (e) {
 
     // Send the request and wait for the response
     xhttp.send(JSON.stringify(data));
-    console.log(JSON.stringify(data))
     location.reload()
 })
 
 
 function updateRow(data, vehicleID, locationID){
-    console.log(data)
     let parsedData = JSON.parse(data);
     
     let table = document.getElementById("vehicles-table");
@@ -67,12 +64,9 @@ function updateRow(data, vehicleID, locationID){
 
             // Get the location of the row where we found the matching driver ID
             let updateRowIndex = table.getElementsByTagName("tr")[i];
-            console.log(updateRowIndex)
             // Get td of email value
             let td = updateRowIndex.getElementsByTagName("td")[1];
-            console.log(td)
             // Reassign email to our value we updated to
-            console.log(parsedData)
             td.innerHTML = parseInt(locationID);
 
        }

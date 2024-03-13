@@ -49,14 +49,12 @@ addDriverRentalForm.addEventListener("submit", function (e) {
             console.log("There was an error with the input.")
         }
     }
-    console.log(data)
     // Send the request and wait for the response
     xhttp.send(JSON.stringify(data));
 })
 
 
-// Creates a single row from an Object representing a single record from 
-// bsg_people
+// Creates a single row from an Object representing a single record
 addRowToTable = (data) => {
 
     // Get a reference to the current table on the page and clear it out.

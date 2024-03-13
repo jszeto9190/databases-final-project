@@ -35,7 +35,6 @@ addLocationForm.addEventListener("submit", function (e) {
         address: addressValue,
         locationvehiclecapacity: locationVehicleCapacityValue
     }
-    console.log(data)
     // Setup our AJAX request
     var xhttp = new XMLHttpRequest();
     xhttp.open("POST", "/add-location-ajax", true);
@@ -65,8 +64,7 @@ addLocationForm.addEventListener("submit", function (e) {
 })
 
 
-// Creates a single row from an Object representing a single record from 
-// bsg_people
+// Creates a single row from an Object representing a single record from
 addRowToTable = (data) => {
 
     // Get a reference to the current table on the page and clear it out.

@@ -34,7 +34,6 @@ addVehicleForm.addEventListener("submit", function (e) {
         modelid: modelIDValue,
         mileage: mileageValue,
     }
-    console.log(data)
     // Setup our AJAX request
     var xhttp = new XMLHttpRequest();
     xhttp.open("POST", "/add-vehicle-ajax", true);
@@ -45,7 +44,6 @@ addVehicleForm.addEventListener("submit", function (e) {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
 
             // Add the new data to the table
-            console.log(xhttp.response);
             addRowToTable(xhttp.response);
             // Clear the input fields for another transaction
             inputLocationID.value = '';
@@ -60,13 +58,11 @@ addVehicleForm.addEventListener("submit", function (e) {
 
     // Send the request and wait for the response
     xhttp.send(JSON.stringify(data));
-    console.log(JSON.stringify(data))
 })
 
 
 // Creates a single row from an Object representing a single record 
 addRowToTable = (data) => {
-    console.log(data);
     // Get a reference to the current table on the page and clear it out.
     let currentTable = document.getElementById("vehicles-table");
 

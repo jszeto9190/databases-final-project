@@ -28,7 +28,6 @@ updateDriverForm.addEventListener("submit", function (e) {
         driverid: driverIDValue,
         email: emailValue,
     }
-    console.log(data)
     // Setup our AJAX request
     var xhttp = new XMLHttpRequest();
     xhttp.open("PUT", "/put-driver-ajax", true);
@@ -39,7 +38,6 @@ updateDriverForm.addEventListener("submit", function (e) {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
 
             // Add the new data to the table
-            console.log(xhttp.response)
             updateRow(xhttp.response, parseInt(driverIDValue), emailValue);
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
@@ -49,12 +47,10 @@ updateDriverForm.addEventListener("submit", function (e) {
 
     // Send the request and wait for the response
     xhttp.send(JSON.stringify(data));
-    console.log(JSON.stringify(data))
 })
 
 
 function updateRow(data, driverID, email){
-    console.log(data)
     let parsedData = JSON.parse(data);
     
     let table = document.getElementById("drivers-table");
@@ -64,14 +60,11 @@ function updateRow(data, driverID, email){
        //rows would be accessed using the "row" variable assigned in the for loop
        if (table.rows[i].getAttribute("data-value") == parseInt(driverID)) {
 
-            // Get the location of the row where we found the matching driver ID
+            // Get the location of the row where we found the matching ID
             let updateRowIndex = table.getElementsByTagName("tr")[i];
-            console.log(updateRowIndex)
             // Get td of email value
             let td = updateRowIndex.getElementsByTagName("td")[1];
-            console.log(td)
             // Reassign email to our value we updated to
-            console.log(parsedData)
             td.innerHTML = email;
 
        }

@@ -31,7 +31,6 @@ addRentalForm.addEventListener("submit", function (e) {
         startdate: startDateValue,
         enddate: endDateValue,
     }
-    console.log(data)
     // Setup our AJAX request
     var xhttp = new XMLHttpRequest();
     xhttp.open("POST", "/add-rental-ajax", true);
@@ -60,8 +59,7 @@ addRentalForm.addEventListener("submit", function (e) {
 })
 
 
-// Creates a single row from an Object representing a single record from 
-// bsg_people
+// Creates a single row from an Object representing a single record
 addRowToTable = (data) => {
 
     // Get a reference to the current table on the page and clear it out.

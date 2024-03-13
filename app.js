@@ -465,7 +465,6 @@ app.post('/add-rental-form', function(req, res) {
 
 app.put('/put-driver-ajax', function(req,res,next){
     let data = req.body;
-    console.log(data)
     let email = data.email;
     let driverid = data.driverid;
 
@@ -726,7 +725,6 @@ app.get('/models', function(req, res)
 
 app.post('/add-model-ajax', function(req, res) 
 {   
-    console.log('Received a POST request to /add-model-ajax');
     // Capture the incoming data and parse it back to a JS object
     let data = req.body;
     let modelname = data.modelname;
@@ -768,7 +766,6 @@ app.post('/add-model-ajax', function(req, res)
 
 
 app.post('/add-model-form', function(req, res) {
-    console.log('Received a POST request to /add-model-form');
     // Capture the incoming data and parse it back to a JS object
     let data = req.body;
     let modelyear = parseInt(data['input-modelyear']);
