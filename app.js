@@ -27,7 +27,6 @@ app.set('view engine', '.hbs');                 // Tell express to use the handl
 
 
 // Static Files
-//app.use(express.static('public'))
 app.use(express.static(__dirname + '/public')); // this is needed to allow for the form to use the ccs style sheet
 
 
@@ -47,26 +46,19 @@ app.get('/', function(req, res)
 
         db.pool.query(query1, function(error, rows, fields){    // Execute the query
 
-            res.render('index', {data: rows});                  // Render the index.hbs file, and also send the renderer
-        })                                                      // an object where 'data' is equal to the 'rows' we
-    });                                                         // received back from the query
+            res.render('index', {data: rows});                  
+        })                                                      
+    });                                                         
 
 app.post('/add-driver-ajax', function(req, res) 
 {
     // Capture the incoming data and parse it back to a JS object
     let data = req.body;
-
-    // Capture NULL values
-    //let middlename = data.middlename;
-
-    //if (middlename.trim() === '') 
-    //{
-    //    middlename = null;
-    //}
+    let middlename = data.middlename ? data.middlename : null;
     
     // Create the query and run it on the database
-    query1 = `INSERT INTO Drivers (email, firstName, middleName, lastName) VALUES ('${data.email}', '${data.firstname}', '${data.middlename}', '${data.lastname}' )`;
-    db.pool.query(query1, function(error, rows, fields){
+    query1 = `INSERT INTO Drivers (email, firstName, middleName, lastName) VALUES (?, ?, ?, ?)`;
+    db.pool.query(query1, [data.email, data.firstname, middlename, data.lastname], function(error, rows, fields){
 
         // Check to see if there was an error
         if (error) {
@@ -102,18 +94,11 @@ app.post('/add-driver-ajax', function(req, res)
 app.post('/add-driver-form', function(req, res) {
     // Capture the incoming data and parse it back to a JS object
     let data = req.body;
-
-    // Capture NULL values
-    //let middlename = data['input-middlename'];
-
-    //if (middlename.trim() === '') 
-    //{
-    //    middlename = 'null';
-    //}
+    let middlename = data['input-middlename'] ? data['input-middlename'] : null;
 
     // Create the query and run it on the database
-    query1 = `INSERT INTO Drivers (email, firstName, middleName, lastName) VALUES ('${data['input-email']}', '${data['input-firstname']}', '${data['input-middlename']}', '${data['input-lastname']}' )`;
-    db.pool.query(query1, function(error, rows, fields) {
+    let query1 = `INSERT INTO Drivers (email, firstName, middleName, lastName) VALUES (?, ?, ?, ?)`;
+    db.pool.query(query1, [data['input-email'], data['input-firstname'], middlename, data['input-lastname']], function(error, rows, fields) {
     
         // Check to see if there was an error
         if (error) {
@@ -122,9 +107,6 @@ app.post('/add-driver-form', function(req, res) {
         console.log(error)
         res.sendStatus(400);
         }
-    
-        // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM bsg_people and
-        // presents it on the screen
         else {
              res.redirect('/');
              }
@@ -177,7 +159,7 @@ app.put('/put-driver-ajax', function(req,res,next){
               res.sendStatus(400);
               }
   
-              // If there was no error, we run our second query and return that data so we can use it to update the people's
+              // If there was no error, we run our second query and return that data so we can use it to update the
               // table on the front-end
               else
               {
@@ -299,9 +281,6 @@ app.post('/add-driver-rental-form', function(req, res) {
         console.log(error)
         res.sendStatus(400);
         }
-    
-        // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM bsg_people and
-        // presents it on the screen
         else {
                 res.redirect('/driversrentals');
                 }
@@ -342,7 +321,7 @@ app.put('/put-driver-rental-ajax', function(req,res,next){
                 res.sendStatus(400);
                 }
     
-                // If there was no error, we run our second query and return that data so we can use it to update the people's
+                // If there was no error, we run our second query and return that data so we can use it to update the
                 // table on the front-end
                 else
                 {
@@ -388,10 +367,10 @@ app.get('/rentals', function(req, res)
 
                 let vehiclesData = rows;
 
-                res.render('rentals', {data: rentalData, vehiclesData: vehiclesData });                  // Render the rentals.hbs file, and also send the renderer
+                res.render('rentals', {data: rentalData, vehiclesData: vehiclesData });                 
             })
-        })                                                  // an object where 'data' is equal to the 'rows' we
-});                                                         // received back from the query
+        })                                                  
+});                                                         
 
 app.post('/add-rental-ajax', function(req, res) 
 {
@@ -454,41 +433,13 @@ app.post('/add-rental-form', function(req, res) {
       console.log(error)
       res.sendStatus(400);
       }
-  
-      // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM bsg_people and
-      // presents it on the screen
       else {
            res.redirect('/rentals');
            }
   })
   });
 
-app.put('/put-driver-ajax', function(req,res,next){
-    let data = req.body;
-    let email = data.email;
-    let driverid = data.driverid;
-
-    let queryUpdateEmail = `UPDATE Drivers SET email = ? WHERE driverID = ?`;
-
-          // Run the 1st query
-          db.pool.query(queryUpdateEmail, [email, driverid], function(error, rows, fields){
-              if (error) {
   
-              // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-              console.log(error);
-              res.sendStatus(400);
-              }
-  
-              // If there was no error, we run our second query and return that data so we can use it to update the people's
-              // table on the front-end
-              else
-              {
-              res.send(rows);
-              console.log(rows);
-              }
-  })});
-
-
 
 
 /* VEHICLES */
@@ -602,9 +553,6 @@ app.post('/add-vehicles-form', function(req, res) {
         console.log(error)
         res.sendStatus(400);
         }
-    
-        // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM bsg_people and
-        // presents it on the screen
         else {
              res.redirect('/vehicles');
              }
@@ -701,9 +649,6 @@ app.post('/add-make-form', function(req, res) {
         console.log(error)
         res.sendStatus(400);
         }
-    
-        // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM bsg_people and
-        // presents it on the screen
         else {
              res.redirect('/makes');
              }
@@ -781,9 +726,6 @@ app.post('/add-model-form', function(req, res) {
         console.log(error)
         res.sendStatus(400);
         }
-    
-        // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM bsg_people and
-        // presents it on the screen
         else {
              res.redirect('/models');
              }
@@ -858,9 +800,6 @@ app.post('/add-location-form', function(req, res) {
         console.log(error)
         res.sendStatus(400);
         }
-    
-        // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM bsg_people and
-        // presents it on the screen
         else {
              res.redirect('/locations');
              }

@@ -24,7 +24,7 @@ addDriverForm.addEventListener("submit", function (e) {
     // Get the values from the form fields
     let emailValue = inputEmail.value;
     let firstNameValue = inputFirstName.value;
-    let middleNameValue = inputMiddleName.value;
+    let middleNameValue =  inputMiddleName.value ? inputMiddleName : null;
     let lastNameValue = inputLastName.value;
 
 
@@ -48,7 +48,7 @@ addDriverForm.addEventListener("submit", function (e) {
             // Clear the input fields for another transaction
             inputEmail.value = '';
             inputFirstName.value = '';
-            inputMiddleName.value = null;
+            inputMiddleName.value = '';
             inputLastName.value = '';
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
@@ -88,7 +88,7 @@ addRowToTable = (data) => {
     driveridCell.innerText = newRow.driverID;
     emailCell.innerText = newRow.email;
     firstnameCell.innerText = newRow.firstName;
-    middlenameCell.innerText = newRow.middleName;
+    middlenameCell.innerText = newRow.middleName ? newRow.middleName : "N/A";
     lastnameCell.innerText = newRow.lastName;
 
     deleteCell = document.createElement("button");
@@ -117,4 +117,5 @@ addRowToTable = (data) => {
     optionDriver.text = newRow.firstName + ' ' +  newRow.middleName + ' ' +  newRow.lastName;
     optionDriver.value = newRow.driverID;
     selectMenuDriver.add(optionDriver);
+    location.reload()
 }
