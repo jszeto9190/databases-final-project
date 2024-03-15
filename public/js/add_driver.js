@@ -3,7 +3,7 @@
 // URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%200%20-%20Setting%20Up%20Node.js
 // Application: Visual Studio Code, version 1.85.1 
 // Type: starter/example code provided by Dr. Michael Curry, starter/example code is filled in/modified by Jason Szeto
-// Author(s): Dr. Michael Curry, Jason Szeto
+// Author(s): Dr. Michael Curry
 // Code version: N/A
 
 // Get the objects we need to modify
@@ -74,7 +74,7 @@ addRowToTable = (data) => {
     let parsedData = JSON.parse(data);
     let newRow = parsedData[parsedData.length - 1]
 
-    // Create a row and 4 cells
+    // Create a row and 6 cells
     let row = document.createElement("TR");
     let driveridCell = document.createElement("TD");
     let emailCell = document.createElement("TD");
@@ -91,6 +91,7 @@ addRowToTable = (data) => {
     middlenameCell.innerText = newRow.middleName ? newRow.middleName : "N/A";
     lastnameCell.innerText = newRow.lastName;
 
+    // generate delete button
     deleteCell = document.createElement("button");
     deleteCell.innerHTML = "Delete";
     deleteCell.onclick = function(){
@@ -112,10 +113,13 @@ addRowToTable = (data) => {
     // Add the row to the table
     currentTable.appendChild(row);
 
+    // Create dropdown menu
     let selectMenuDriver = document.getElementById("mySelectDriver");
     let optionDriver = document.createElement("option");
     optionDriver.text = newRow.firstName + ' ' +  newRow.middleName + ' ' +  newRow.lastName;
     optionDriver.value = newRow.driverID;
     selectMenuDriver.add(optionDriver);
+
+    // Reload data
     location.reload()
 }

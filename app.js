@@ -3,7 +3,7 @@
 // URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%200%20-%20Setting%20Up%20Node.js
 // Application: Visual Studio Code, version 1.85.1 
 // Type: starter/example code provided by Dr. Michael Curry, starter/example code is filled in/modified by Jason Szeto
-// Author(s): Dr. Michael Curry, Jason Szeto
+// Author(s): Dr. Michael Curry
 // Code version: N/A
 
 /*
@@ -14,7 +14,7 @@ var express = require('express');
 var app = express();
 app.use(express.json())
 
-PORT = 9482;
+PORT = 9466;
 
 // Database
 var db = require('./database/db-connector');
@@ -31,58 +31,48 @@ app.use(express.static(__dirname + '/public')); // this is needed to allow for t
 
 
 /* DRIVERS */
-app.get('/', function(req, res)
-    {   
-        let query1;
+app.get('/', function(req, res) {   
+    let query1;
+    // show drivers table
+    if (req.query.lastname === undefined) {
+        query1 = 'SELECT * FROM Drivers;';
+    }
+    // set up query to perform search on Driver by last name
+    else {
+        query1 = `SELECT * FROM Drivers WHERE lastName LIKE "${req.query.lastname}%"`;
+    }
+    db.pool.query(query1, function(error, rows, fields) {    // Execute the query
+        res.render('index', {data: rows});                  
+    })                                                      
+});                                                         
 
-        if (req.query.lastname === undefined)
-        {
-            query1 = 'SELECT * FROM Drivers;';
-        }
-        else
-        {
-            query1 = `SELECT * FROM Drivers WHERE lastName LIKE "${req.query.lastname}%"`
-        }
-
-        db.pool.query(query1, function(error, rows, fields){    // Execute the query
-
-            res.render('index', {data: rows});                  
-        })                                                      
-    });                                                         
-
-app.post('/add-driver-ajax', function(req, res) 
-{
-    // Capture the incoming data and parse it back to a JS object
+app.post('/add-driver-ajax', function(req, res) {
+    // Capture the incoming data
     let data = req.body;
+    // allow null as a possibility 
     let middlename = data.middlename ? data.middlename : null;
     
     // Create the query and run it on the database
     query1 = `INSERT INTO Drivers (email, firstName, middleName, lastName) VALUES (?, ?, ?, ?)`;
     db.pool.query(query1, [data.email, data.firstname, middlename, data.lastname], function(error, rows, fields){
-
         // Check to see if there was an error
         if (error) {
-
             // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
             console.log(error)
             res.sendStatus(400);
         }
-        else
-        {
+        else {
             // If there was no error, perform a SELECT *
             query2 = `SELECT * FROM Drivers;`;
             db.pool.query(query2, function(error, rows, fields){
-
                 // If there was an error on the second query, send a 400
-                if (error) {
-                    
+                if (error) {          
                     // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
                     console.log(error);
                     res.sendStatus(400);
                 }
                 // If all went well, send the results of the query back.
-                else
-                {
+                else {
                     res.send(rows);
                 }
             })
@@ -92,249 +82,239 @@ app.post('/add-driver-ajax', function(req, res)
 
 
 app.post('/add-driver-form', function(req, res) {
-    // Capture the incoming data and parse it back to a JS object
+    // Capture the incoming data 
     let data = req.body;
+    // allow null as entry
     let middlename = data['input-middlename'] ? data['input-middlename'] : null;
 
     // Create the query and run it on the database
     let query1 = `INSERT INTO Drivers (email, firstName, middleName, lastName) VALUES (?, ?, ?, ?)`;
     db.pool.query(query1, [data['input-email'], data['input-firstname'], middlename, data['input-lastname']], function(error, rows, fields) {
-    
         // Check to see if there was an error
         if (error) {
-    
         // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
         console.log(error)
         res.sendStatus(400);
         }
         else {
              res.redirect('/');
-             }
+        }
     })
-    });
+});
 
-app.delete('/delete-driver-ajax/', function(req,res,next){
+app.delete('/delete-driver-ajax/', function(req,res,next) {
+    // Capture the incoming data 
     let data = req.body;
     let driverID = parseInt(data.driverid);
+
+    // delete driver info from Drivers and DriversRentals
     let deleteDrivers = `DELETE FROM Drivers WHERE driverID = ?`;
     let deleteDriversRentals= `DELETE FROM DriversRentals WHERE driverID = ?`;
   
-          // Run the 1st query
-          db.pool.query(deleteDrivers, [driverID], function(error, rows, fields){
-              if (error) {
-  
-              // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-              console.log(error);
-              res.sendStatus(400);
-              }
-  
-              else
-              {
-                  // Run the second query
-                  db.pool.query(deleteDriversRentals, [driverID], function(error, rows, fields) {
-  
-                      if (error) {
-                          console.log(error);
-                          res.sendStatus(400);
-                      } else {
-                          res.sendStatus(204);
-                      }
-                  })
-              }
-  })});
+    // Run the 1st query
+    db.pool.query(deleteDrivers, [driverID], function(error, rows, fields) {
+        if (error) {
+        // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+        console.log(error);
+        res.sendStatus(400);
+        }
+        else {
+            // Run the second query
+            db.pool.query(deleteDriversRentals, [driverID], function(error, rows, fields) {
+                if (error) {
+                    console.log(error);
+                    res.sendStatus(400);
+                } 
+                else {
+                    res.sendStatus(204);
+                }
+            })
+        }
+    })
+});
 
-app.put('/put-driver-ajax', function(req,res,next){
+app.put('/put-driver-ajax', function(req,res,next) {
+    // Capture the incoming data 
     let data = req.body;
     let email = data.email;
     let driverid = data.driverid;
 
+    // Update Driver's email
     let queryUpdateEmail = `UPDATE Drivers SET email = ? WHERE driverID = ?`;
 
-          // Run the 1st query
-          db.pool.query(queryUpdateEmail, [email, driverid], function(error, rows, fields){
-              if (error) {
-  
-              // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-              console.log(error);
-              res.sendStatus(400);
-              }
-  
-              // If there was no error, we run our second query and return that data so we can use it to update the
-              // table on the front-end
-              else
-              {
-              res.send(rows);
-              console.log(rows);
-              }
-  })});
+    // Run the 1st query
+    db.pool.query(queryUpdateEmail, [email, driverid], function(error, rows, fields) {
+        if (error) {
+        // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+        console.log(error);
+        res.sendStatus(400);
+        }
+        // If there was no error, we run our second query and return that data so we can use it to update the
+        // table on the front-end
+        else {
+        res.send(rows);
+        }
+    })
+});
 
 
 
 /* DRIVERSRENTALS */
-app.get('/driversrentals', function(req, res)
-    {
-        let query1 = `
-        SELECT
-            DriversRentals.driverIDRentalID,
-            Drivers.driverID,
-            CONCAT(Drivers.firstName, ' ', COALESCE(Drivers.middleName, ''), ' ', Drivers.lastName, ' (', Drivers.email, ') ') AS driverFullNameEmail,
-            CONCAT(Makes.makeName, ' ', Models.modelName, ' (', Models.modelYear,', ', Vehicles.mileage, ' miles) from ', DATE_FORMAT(Rentals.startDate, '%Y-%m-%d'), ' to ', DATE_FORMAT(Rentals.endDate, '%Y-%m-%d')) AS makeNameModelNameYearDate
-        FROM
-            DriversRentals
-        LEFT JOIN Rentals ON DriversRentals.rentalID = Rentals.rentalID
-        LEFT JOIN Drivers ON DriversRentals.driverID = Drivers.driverID
-        LEFT JOIN Vehicles ON Rentals.vehicleID = Vehicles.vehicleID
-        LEFT JOIN Makes ON Vehicles.makeID = Makes.makeID
-        LEFT JOIN Models ON Vehicles.modelID = Models.modelID;`;
+app.get('/driversrentals', function(req, res) {
+    // pull data for DriversRentals table to display data
+    let query1 = `
+    SELECT
+        DriversRentals.driverIDRentalID,
+        Drivers.driverID,
+        CONCAT(Drivers.firstName, ' ', COALESCE(Drivers.middleName, ''), ' ', Drivers.lastName, ' (', Drivers.email, ') ') AS driverFullNameEmail,
+        CONCAT(Makes.makeName, ' ', Models.modelName, ' (', Models.modelYear,', ', Vehicles.mileage, ' miles) from ', DATE_FORMAT(Rentals.startDate, '%Y-%m-%d'), ' to ', DATE_FORMAT(Rentals.endDate, '%Y-%m-%d')) AS makeNameModelNameYearDate
+    FROM
+        DriversRentals
+    LEFT JOIN Rentals ON DriversRentals.rentalID = Rentals.rentalID
+    LEFT JOIN Drivers ON DriversRentals.driverID = Drivers.driverID
+    LEFT JOIN Vehicles ON Rentals.vehicleID = Vehicles.vehicleID
+    LEFT JOIN Makes ON Vehicles.makeID = Makes.makeID
+    LEFT JOIN Models ON Vehicles.modelID = Models.modelID;`;
+    
+    // pull all Drivers data for dropdown selector
+    let query2 = `
+    SELECT * FROM Drivers;`;
+
+    // pull all Rentals data for dropdown selector
+    let query3 = `
+    SELECT 
+        Rentals.rentalID,
+        CONCAT(Makes.makeName, ' ', Models.modelName, ' (', Models.modelYear,', ', Vehicles.mileage, ' miles) ') AS makeNameModelNameYear,
+        DATE_FORMAT(Rentals.startDate, '%Y-%m-%d') AS rentalStartDate,
+        DATE_FORMAT(Rentals.endDate, '%Y-%m-%d') AS rentalEndDate
+    FROM
+        Rentals
+    LEFT JOIN Vehicles ON Rentals.vehicleID = Vehicles.vehicleID
+    LEFT JOIN Makes ON Vehicles.makeID = Makes.makeID
+    LEFT JOIN Models ON Vehicles.modelID = Models.modelID;`;
+
+    db.pool.query(query1, function(error, rows, fields){
+
+        let driversRentalsdata = rows
+
+        db.pool.query(query2, function(error, rows, fields){
         
-        let query2 = `
-        SELECT * FROM Drivers;`;
-
-        let query3 = `
-        SELECT 
-            Rentals.rentalID,
-            CONCAT(Makes.makeName, ' ', Models.modelName, ' (', Models.modelYear,', ', Vehicles.mileage, ' miles) ') AS makeNameModelNameYear,
-            DATE_FORMAT(Rentals.startDate, '%Y-%m-%d') AS rentalStartDate,
-            DATE_FORMAT(Rentals.endDate, '%Y-%m-%d') AS rentalEndDate
-        FROM
-            Rentals
-        LEFT JOIN Vehicles ON Rentals.vehicleID = Vehicles.vehicleID
-        LEFT JOIN Makes ON Vehicles.makeID = Makes.makeID
-        LEFT JOIN Models ON Vehicles.modelID = Models.modelID;`;
-
-        db.pool.query(query1, function(error, rows, fields){
-
-            let driversRentalsdata = rows
-
-            db.pool.query(query2, function(error, rows, fields){
+        let driversData = rows;
             
-            let driversData = rows;
-                
-                db.pool.query(query3, function(error, rows, fields){
+            db.pool.query(query3, function(error, rows, fields){
 
-                    let rentalsData = rows;
+                let rentalsData = rows;
 
-                    res.render('drivers_rentals', {data: driversRentalsdata, driversData: driversData, rentalsData: rentalsData});
-                })
+                res.render('drivers_rentals', {data: driversRentalsdata, driversData: driversData, rentalsData: rentalsData});
             })
         })
-    });
+    })
+});
 
-app.post('/add-driver-rental-ajax', function(req, res) 
-    {
-        // Capture the incoming data and parse it back to a JS object
-        let data = req.body;
+app.post('/add-driver-rental-ajax', function(req, res) {
+    // Capture the incoming data
+    let data = req.body;
 
-        let driverid = parseInt(data.driverid);
-        let rentalid = parseInt(data.rentalid);
+    let driverid = parseInt(data.driverid);
+    let rentalid = parseInt(data.rentalid);
 
-        // Create the query and run it on the database
-        query1 = `INSERT INTO DriversRentals (driverID, rentalID) VALUES (${driverid}, ${rentalid})`;
-        db.pool.query(query1, function(error, rows, fields){
-
-            // Check to see if there was an error
-            if (error) {
-
-                // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-                console.log(error)
-                res.sendStatus(400);
-            }
-            else
-            {
-                // If there was no error, perform a SELECT *
-                query2 = `SELECT * FROM DriversRentals;`;
-                db.pool.query(query2, function(error, rows, fields){
-
-                    // If there was an error on the second query, send a 400
-                    if (error) {
-                        
-                        // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-                        console.log(error);
-                        res.sendStatus(400);
-                    }
-                    // If all went well, send the results of the query back.
-                    else
-                    {
-                        res.send(rows);
-                    }
-                })
-            }
-        })
-    });
+    // Create the query and run it on the database
+    query1 = `INSERT INTO DriversRentals (driverID, rentalID) VALUES (${driverid}, ${rentalid})`;
+    db.pool.query(query1, function(error, rows, fields){
+        // Check to see if there was an error
+        if (error) {
+            // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+            console.log(error)
+            res.sendStatus(400);
+        }
+        else {
+            // If there was no error, perform a SELECT *
+            query2 = `SELECT * FROM DriversRentals;`;
+            db.pool.query(query2, function(error, rows, fields){
+                // If there was an error on the second query, send a 400
+                if (error) {    
+                    // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+                    console.log(error);
+                    res.sendStatus(400);
+                }
+                // If all went well, send the results of the query back.
+                else {
+                res.send(rows);
+                }
+            })
+        }
+    })
+});
     
     
 app.post('/add-driver-rental-form', function(req, res) {
-    // Capture the incoming data and parse it back to a JS object
+    // Capture the incoming data  
     let data = req.body;
     
     let driverid = parseInt(data['input-driverid']);
     let rentalid = parseInt(data['input-rentalid']);
-
     // Create the query and run it on the database
     query1 = `INSERT INTO DriversRentals (driverID, rentalID) VALUES (${driverid}, ${rentalid})`;
     db.pool.query(query1, function(error, rows, fields) {
-    
         // Check to see if there was an error
         if (error) {
-    
         // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
         console.log(error)
         res.sendStatus(400);
         }
         else {
-                res.redirect('/driversrentals');
-                }
+        res.redirect('/driversrentals');
+        }
     })
-    });
+});
 
 app.delete('/delete-driver-rental-ajax/', function(req,res,next){
+    // Capture the incoming data 
     let data = req.body;
     let driverIDRentalID = parseInt(data.driveridrentalid);
+    // delete data from DriversRentals table
     let deleteDriversRentals = `DELETE FROM DriversRentals WHERE driverIDRentalID = ?`;
-    
-            // Run the 1st query
-            db.pool.query(deleteDriversRentals, [driverIDRentalID], function(error, rows, fields){
-                if (error) {
-    
-                // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-                console.log(error);
-                res.sendStatus(400);
-                }
-                else {
-                    res.sendStatus(204);
-                }
-            })});
+    // Run the 1st query
+    db.pool.query(deleteDriversRentals, [driverIDRentalID], function(error, rows, fields){
+        if (error) {
+        // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+        console.log(error);
+        res.sendStatus(400);
+        }
+        else {
+            res.sendStatus(204);
+        }
+    })
+});
 
-app.put('/put-driver-rental-ajax', function(req,res,next){
+app.put('/put-driver-rental-ajax', function(req,res,next) {
+    // Capture the incoming data 
     let data = req.body;
     let rentalid = data.rentalid;
     let driveridrentalid = data.driveridrentalid;
-
+    // Update the rental details for a certain row in DriversRentals table
     let queryUpdateRental = `UPDATE DriversRentals SET rentalID = ? WHERE driverIDRentalID = ?`;
-
-            // Run the 1st query
-            db.pool.query(queryUpdateRental, [rentalid, driveridrentalid], function(error, rows, fields){
-                if (error) {
-    
-                // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-                console.log(error);
-                res.sendStatus(400);
-                }
-    
-                // If there was no error, we run our second query and return that data so we can use it to update the
-                // table on the front-end
-                else
-                {
-                res.send(rows);
-                console.log(rows);
-                }
-    })});
+        // Run the 1st query
+        db.pool.query(queryUpdateRental, [rentalid, driveridrentalid], function(error, rows, fields){
+            if (error) {
+            // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+            console.log(error);
+            res.sendStatus(400);
+            }
+            // If there was no error, we run our second query and return that data so we can use it to update the
+            // table on the front-end
+            else
+            {
+            res.send(rows);
+            }
+    })
+});
             
 
 
 /* RENTALS */
-app.get('/rentals', function(req, res)
-{   
+app.get('/rentals', function(req, res) {   
+    // pull data to display on Rentals table
     let query1 = `
     SELECT 
         Rentals.rentalID,
@@ -347,6 +327,7 @@ app.get('/rentals', function(req, res)
     LEFT JOIN Makes ON Vehicles.makeID = Makes.makeID
     LEFT JOIN Models ON Vehicles.modelID = Models.modelID;`;
 
+    // pull data to display in a dropdown menu for adding a new rental
     let query2 = `
     SELECT 
         Vehicles.vehicleID,
@@ -359,8 +340,8 @@ app.get('/rentals', function(req, res)
     JOIN Makes ON Vehicles.makeID = Makes.makeID
     JOIN Models ON Vehicles.modelID = Models.modelID;`;
 
-        db.pool.query(query1, function(error, rows, fields){    // Execute the query
-          
+        db.pool.query(query1, function(error, rows, fields) {    // Execute the query
+
             let rentalData = rows;
 
             db.pool.query(query2, function(error, rows, fields){
@@ -372,79 +353,71 @@ app.get('/rentals', function(req, res)
         })                                                  
 });                                                         
 
-app.post('/add-rental-ajax', function(req, res) 
-{
-  // Capture the incoming data and parse it back to a JS object
+app.post('/add-rental-ajax', function(req, res)  {
+  // Capture the incoming data  
   let data = req.body;
   let vehicleid = parseInt(data.vehicleid);
   let startdate = data.startdate;
   let enddate = data.enddate;
 
   // Create the query and run it on the database
-  query1 = `INSERT INTO Rentals (vehicleID, startDate, endDate) VALUES (${vehicleid}, '${startdate}', '${enddate}')`;
-  db.pool.query(query1, function(error, rows, fields){
+query1 = `INSERT INTO Rentals (vehicleID, startDate, endDate) VALUES (${vehicleid}, '${startdate}', '${enddate}')`;
 
-      // Check to see if there was an error
-      if (error) {
-
-          // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-          console.log(error)
-          res.sendStatus(400);
-      }
-      else
-      {
-          // If there was no error, perform a SELECT *
-          query2 = `SELECT * FROM Rentals;`;
-          db.pool.query(query2, function(error, rows, fields){
-
-              // If there was an error on the second query, send a 400
-              if (error) {
-                  
-                  // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-                  console.log(error);
-                  res.sendStatus(400);
-              }
-              // If all went well, send the results of the query back.
-              else
-              {
-                  res.send(rows);
-              }
-          })
-      }
-  })
+    db.pool.query(query1, function(error, rows, fields) {
+        // Check to see if there was an error
+        if (error) {
+            // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+            console.log(error)
+            res.sendStatus(400);
+        }
+        else {
+            // If there was no error, perform a SELECT *
+            query2 = `SELECT * FROM Rentals;`;
+            db.pool.query(query2, function(error, rows, fields) {
+                // If there was an error on the second query, send a 400
+                if (error) {
+                    // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+                    console.log(error);
+                    res.sendStatus(400);
+                }
+                // If all went well, send the results of the query back.
+                else {
+                res.send(rows);
+                }
+            })
+        }
+    })
 });
 
 
 app.post('/add-rental-form', function(req, res) {
-  // Capture the incoming data and parse it back to a JS object
+  // Capture the incoming data  
   let data = req.body;
   let vehicleid = parseInt(data['input-makeNameModelNameYear']);
   let startdate = data['input-startdate'];
   let enddate = data['input-enddate'];
  
-  // Create the query and run it on the database
-  query1 = `INSERT INTO Rentals (vehicleID, startDate, endDate) VALUES (${vehicleid}, '${startdate}', '${enddate}')`;
-  db.pool.query(query1, function(error, rows, fields) {
-  
-      // Check to see if there was an error
-      if (error) {
-  
-      // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
-      console.log(error)
-      res.sendStatus(400);
-      }
-      else {
-           res.redirect('/rentals');
-           }
-  })
-  });
+    // Create the query and run it on the database
+    query1 = `INSERT INTO Rentals (vehicleID, startDate, endDate) VALUES (${vehicleid}, '${startdate}', '${enddate}')`;
+    db.pool.query(query1, function(error, rows, fields) {
+        // Check to see if there was an error
+        if (error) {
+        // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+        console.log(error)
+        res.sendStatus(400);
+        }
+        else {
+        res.redirect('/rentals');
+        }
+    })
+});
 
   
 
 
 /* VEHICLES */
-app.get('/vehicles', function(req, res)
-{
+app.get('/vehicles', function(req, res) {
+    // pull data to display in Vehicles table
     let query1 = `
     SELECT 
         Vehicles.vehicleID, 
@@ -460,11 +433,11 @@ app.get('/vehicles', function(req, res)
     LEFT JOIN Models ON Vehicles.modelID = Models.modelID 
     LEFT JOIN Makes ON Vehicles.makeID = Makes.makeID 
     LEFT JOIN Locations ON Vehicles.locationID = Locations.locationID;`;
-
+    // pull all data from Locations table
     let query2 = `SELECT * FROM Locations;`;
-
+    // pull all data from Makes table
     let query3 = `SELECT * FROM Makes;`;
-
+    // pull all data from Models table
     let query4 = `SELECT * FROM Models;`;
 
     db.pool.query(query1, function(error, rows, fields){
@@ -492,7 +465,7 @@ app.get('/vehicles', function(req, res)
 
 app.post('/add-vehicle-ajax', function(req, res) 
 {
-    // Capture the incoming data and parse it back to a JS object
+    // Capture the incoming data  
     let data = req.body;
     let locationid = data.locationid ? parseInt(data.locationid) : null
     let makeid = parseInt(data.makeid)
@@ -501,24 +474,20 @@ app.post('/add-vehicle-ajax', function(req, res)
 
     // Create the query and run it on the database
     query1 = `INSERT INTO Vehicles (locationID, makeID, modelID, mileage) VALUES (${locationid}, ${makeid}, ${modelid},${mileage})`;
-    db.pool.query(query1, function(error, rows, fields){
-
+    db.pool.query(query1, function(error, rows, fields) {
         // Check to see if there was an error
         if (error) {
-
             // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
             console.log(error)
             res.sendStatus(400);
         }
-        else
-        {
+        else {
             // If there was no error, perform a SELECT *
             query2 = `SELECT * FROM Vehicles;`;
-            db.pool.query(query2, function(error, rows, fields){
+            db.pool.query(query2, function(error, rows, fields) {
 
                 // If there was an error on the second query, send a 400
-                if (error) {
-                    
+                if (error) {   
                     // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
                     console.log(error);
                     res.sendStatus(400);
@@ -535,7 +504,7 @@ app.post('/add-vehicle-ajax', function(req, res)
 
 
 app.post('/add-vehicles-form', function(req, res) {
-    // Capture the incoming data and parse it back to a JS object
+    // Capture the incoming data  
     let data = req.body;
     let locationid = data['input-fullAddress'] ? parseInt(data['input-fullAddress']) : null;
     let makeid = parseInt(data['input-makeName']);
@@ -545,58 +514,52 @@ app.post('/add-vehicles-form', function(req, res) {
     // Create the query and run it on the database
     query1 = `INSERT INTO Vehicles (locationID, makeID, modelID, mileage) VALUES (${locationid}, ${makeid}, ${modelid}, ${mileage})`;
     db.pool.query(query1, function(error, rows, fields) {
-    
         // Check to see if there was an error
         if (error) {
-    
         // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
         console.log(error)
         res.sendStatus(400);
         }
         else {
-             res.redirect('/vehicles');
-             }
+        res.redirect('/vehicles');
+        }
     })
-    });
+});
 
-app.put('/put-vehicle-ajax', function(req,res,next){
+app.put('/put-vehicle-ajax', function(req,res,next) {
+    // Capture the incoming data 
     let data = req.body;
     let locationid = data.locationid;
     let vehicleid = data.vehicleid;
-
+    // Update the location of a vehicle
     let queryUpdateRental = `UPDATE Vehicles SET locationID = ? WHERE vehicleID = ?`;
-
             // Run the 1st query
             db.pool.query(queryUpdateRental, [locationid, vehicleid], function(error, rows, fields){
                 if (error) {
-    
                 // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
                 console.log(error);
                 res.sendStatus(400);
                 }
-    
                 // If there was no error, we run our second query and return that data so we can use it to update the people's
                 // table on the front-end
-                else
-                {
+                else{
                 res.send(rows);
-                console.log(rows);
                 }
-    })});
+            })
+});
 
 
 /* MAKES */
-app.get('/makes', function(req, res)
-{
+app.get('/makes', function(req, res) {
+    // display all makes in Makes table
     let query1 = `SELECT * FROM Makes;`;
-    db.pool.query(query1, function(error, rows, fields){
+    db.pool.query(query1, function(error, rows, fields) {
         res.render('makes', {data: rows});
     })
 });
 
-app.post('/add-make-ajax', function(req, res) 
-{
-    // Capture the incoming data and parse it back to a JS object
+app.post('/add-make-ajax', function(req, res) {
+    // Capture the incoming data  
     let data = req.body;
 
     // Create the query and run it on the database
@@ -605,27 +568,22 @@ app.post('/add-make-ajax', function(req, res)
 
         // Check to see if there was an error
         if (error) {
-
             // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
             console.log(error)
             res.sendStatus(400);
         }
-        else
-        {
+        else {
             // If there was no error, perform a SELECT *
             query2 = `SELECT * FROM Makes;`;
-            db.pool.query(query2, function(error, rows, fields){
-
+            db.pool.query(query2, function(error, rows, fields) {
                 // If there was an error on the second query, send a 400
-                if (error) {
-                    
+                if (error) {  
                     // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
                     console.log(error);
                     res.sendStatus(400);
                 }
                 // If all went well, send the results of the query back.
-                else
-                {
+                else{
                     res.send(rows);
                 }
             })
@@ -635,73 +593,64 @@ app.post('/add-make-ajax', function(req, res)
 
 
 app.post('/add-make-form', function(req, res) {
-    // Capture the incoming data and parse it back to a JS object
+    // Capture the incoming data  
     let data = req.body;
       
     // Create the query and run it on the database
     query1 = `INSERT INTO Makes (makeName) VALUES ('${data['input-makename']}' )`;
     db.pool.query(query1, function(error, rows, fields) {
-    
         // Check to see if there was an error
         if (error) {
-    
         // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
         console.log(error)
         res.sendStatus(400);
         }
-        else {
-             res.redirect('/makes');
-             }
+        else { 
+        res.redirect('/makes');
+        }
     })
-    });
+});
 
 
 
 
 
 /* MODELS */
-app.get('/models', function(req, res)
-{
+app.get('/models', function(req, res) {
+    // display Models in Models table
     let query1 = "SELECT * FROM Models;";
-    db.pool.query(query1, function(error, rows, fields){
+    db.pool.query(query1, function(error, rows, fields) {
         res.render('models', {data: rows});
     })
 });
 
-app.post('/add-model-ajax', function(req, res) 
-{   
-    // Capture the incoming data and parse it back to a JS object
+app.post('/add-model-ajax', function(req, res) {   
+    // Capture the incoming data  
     let data = req.body;
     let modelname = data.modelname;
     let modelyear = parseInt(data.modelyear);
 
     // Create the query and run it on the database
     query1 = `INSERT INTO Models (modelName, modelYear) VALUES ('${modelname}', ${modelyear} )`;
-    db.pool.query(query1, function(error, rows, fields){
-
+    db.pool.query(query1, function(error, rows, fields) {
         // Check to see if there was an error
         if (error) {
-
             // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
             console.log(error)
             res.sendStatus(400);
         }
-        else
-        {
+        else {
             // If there was no error, perform a SELECT *
             query2 = `SELECT * FROM Models;`;
-            db.pool.query(query2, function(error, rows, fields){
-
+            db.pool.query(query2, function(error, rows, fields) {
                 // If there was an error on the second query, send a 400
-                if (error) {
-                    
+                if (error) {  
                     // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
                     console.log(error);
                     res.sendStatus(400);
                 }
                 // If all went well, send rows.
-                else
-                {
+                else {
                     res.send(rows);
                 }
             })
@@ -711,72 +660,63 @@ app.post('/add-model-ajax', function(req, res)
 
 
 app.post('/add-model-form', function(req, res) {
-    // Capture the incoming data and parse it back to a JS object
+    // Capture the incoming data  
     let data = req.body;
     let modelyear = parseInt(data['input-modelyear']);
     
     // Create the query and run it on the database
     query1 = `INSERT INTO Models (modelName, modelYear) VALUES ('${data['input-modelname']}', ${modelyear})`;
     db.pool.query(query1, function(error, rows, fields) {
-    
         // Check to see if there was an error
         if (error) {
-    
         // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
         console.log(error)
         res.sendStatus(400);
         }
         else {
-             res.redirect('/models');
-             }
+            res.redirect('/models');
+        }
     })
-    });
+});
 
 
 
 
 /* LOCATIONS */
-app.get('/locations', function(req, res)
-    {
-        let query1 = "SELECT * FROM Locations;";
-        db.pool.query(query1, function(error, rows, fields){
-            res.render('locations', {data: rows});
-        })
-    });                                                       // received back from the query
+app.get('/locations', function(req, res) {
+    // show locations in Locations table
+    let query1 = "SELECT * FROM Locations;";
+    db.pool.query(query1, function(error, rows, fields) {
+        res.render('locations', {data: rows});
+    })
+});                                                    
 
-app.post('/add-location-ajax', function(req, res) 
-{
-    // Capture the incoming data and parse it back to a JS object
+app.post('/add-location-ajax', function(req, res) {
+    // Capture the incoming data  
     let data = req.body;
     let locationvehiclecapacity = parseInt(data.locationvehiclecapacity)
 
     // Create the query and run it on the database
     query1 = `INSERT INTO Locations (city, state, address, locationVehicleCapacity) VALUES ('${data.city}', '${data.state}', '${data.address}', ${locationvehiclecapacity} )`;
     db.pool.query(query1, function(error, rows, fields){
-
         // Check to see if there was an error
         if (error) {
-
             // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
             console.log(error)
             res.sendStatus(400);
         }
-        else
-        {
+        else {
             // If there was no error, perform a SELECT *
             query2 = `SELECT * FROM Locations;`;
-            db.pool.query(query2, function(error, rows, fields){
-
+            db.pool.query(query2, function(error, rows, fields) {
                 // If there was an error on the second query, send a 400
                 if (error) {
-                    
                     // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
                     console.log(error);
                     res.sendStatus(400);
                 }
                 // If all went well, send the results of the query back.
-                else
-                {
+                else {
                     res.send(rows);
                 }
             })
@@ -786,29 +726,27 @@ app.post('/add-location-ajax', function(req, res)
 
 
 app.post('/add-location-form', function(req, res) {
-    // Capture the incoming data and parse it back to a JS object
+    // Capture the incoming data  
     let data = req.body;
 
     // Create the query and run it on the database
     query1 = `INSERT INTO Locations (city, state, address, locationVehicleCapacity) VALUES ('${data['input-city']}', '${data['input-state']}', '${data['input-address']}', ${data['input-locationvehiclecapacity']} )`;
     db.pool.query(query1, function(error, rows, fields) {
-    
         // Check to see if there was an error
         if (error) {
-    
         // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
         console.log(error)
         res.sendStatus(400);
         }
         else {
-             res.redirect('/locations');
-             }
+            res.redirect('/locations');
+        }
     })
-    });
+});
 
 /*
     LISTENER
 */
-app.listen(PORT, function(){            // This is the basic syntax for what is called the 'listener' which receives incoming requests on the specified PORT.
+app.listen(PORT, function() {            // This is the basic syntax for what is called the 'listener' which receives incoming requests on the specified PORT.
     console.log('Express started on http://localhost:' + PORT + '; press Ctrl-C to terminate.')
 });

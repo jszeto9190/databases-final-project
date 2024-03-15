@@ -3,7 +3,7 @@
 /* URL: https://replit.com/@PamVanLonden/a-Global-Stylesheet#App.css 
 /* Application: Visual Studio Code, version 1.85.1 
 /* Type: starter/example code provided by Pan Van Londen, starter/example code is filled in/modified by Jason Szeto
-/* Author(s): Pan Van Londen, Jason Szeto
+/* Author(s): Pan Van Londen
 /* Code version: N/A -->
 
 /*  ===== MOBILE styles (reside at the top and are inherited by all devices) ===== */
@@ -75,10 +75,13 @@
   }
   
   /* ----- Anchors ----- Text links */
-  a {}
+  a {
+    color: var(--midnightBlue)
+  }
   a:link {}
   a:hover {}
-  a:active {}
+  a:active {
+  }
   a:visited {
     color: var(--darkPlum)
   }

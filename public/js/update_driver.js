@@ -3,7 +3,7 @@
 // URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%200%20-%20Setting%20Up%20Node.js
 // Application: Visual Studio Code, version 1.85.1 
 // Type: starter/example code provided by Dr. Michael Curry, starter/example code is filled in/modified by Jason Szeto
-// Author(s): Dr. Michael Curry, Jason Szeto
+// Author(s): Dr. Michael Curry
 // Code version: N/A
 
 // Get the objects we need to modify
@@ -51,8 +51,7 @@ updateDriverForm.addEventListener("submit", function (e) {
 
 
 function updateRow(data, driverID, email){
-    let parsedData = JSON.parse(data);
-    
+
     let table = document.getElementById("drivers-table");
 
     for (let i = 0, row; row = table.rows[i]; i++) {
@@ -69,4 +68,6 @@ function updateRow(data, driverID, email){
 
        }
     }
+    // Reload data 
+    location.reload()
 }

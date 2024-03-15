@@ -3,7 +3,7 @@
 // URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%200%20-%20Setting%20Up%20Node.js
 // Application: Visual Studio Code, version 1.85.1 
 // Type: starter/example code provided by Dr. Michael Curry, starter/example code is filled in/modified by Jason Szeto
-// Author(s): Dr. Michael Curry, Jason Szeto
+// Author(s): Dr. Michael Curry
 // Code version: N/A
 
 // Get the objects we need to modify
@@ -80,6 +80,7 @@ addRowToTable = (data) => {
     driverIDCell.innerText = newRow.driverFullNameEmail;
     rentalIDCell.innerText = newRow.makeNameModelNameYearDate;
 
+    // generate delete button
     deleteCell = document.createElement("button");
     deleteCell.innerHTML = "Delete";
     deleteCell.onclick = function(){
@@ -99,17 +100,20 @@ addRowToTable = (data) => {
     // Add the row to the table
     currentTable.appendChild(row);
 
+    // Create dropdown menu
     let selectMenuFullDriverInfo = document.getElementById("mySelectFullDriverInfo");
     let optionFullDriverInfo = document.createElement("option");
     optionFullDriverInfo.text = newRow.driverFullNameEmail;
     optionFullDriverInfo.value = newRow.driverID;
     selectMenuFullDriverInfo.add(optionFullDriverInfo);
 
+    // Create dropdown menu
     let selectMenuFullRentalInfo = document.getElementById("mySelectFullRentalInfo");
     let optionFullRentalInfo = document.createElement("option");
     optionFullRentalInfo.text = newRow.makeNameModelNameYearDate;
     optionFullRentalInfo.value = newRow.rentalID;
     selectMenuFullRentalInfo.add(optionFullRentalInfo);
 
+    // Reload data
     location.reload()
 }

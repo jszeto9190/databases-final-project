@@ -3,7 +3,7 @@
 // URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%200%20-%20Setting%20Up%20Node.js
 // Application: Visual Studio Code, version 1.85.1 
 // Type: starter/example code provided by Dr. Michael Curry, starter/example code is filled in/modified by Jason Szeto
-// Author(s): Dr. Michael Curry, Jason Szeto
+// Author(s): Dr. Michael Curry
 // Code version: N/A
 
 // Get the objects we need to modify
@@ -74,7 +74,7 @@ addRowToTable = (data) => {
     let parsedData = JSON.parse(data);
     let newRow = parsedData[parsedData.length - 1]
 
-    // Create a row and 4 cells
+    // Create a row and 5 cells
     let row = document.createElement("TR");
     let vehicleidCell = document.createElement("TD");
     let locationidCell = document.createElement("TD");
@@ -109,16 +109,21 @@ addRowToTable = (data) => {
     optionFullAddress.value = newRow.locationID;
     selectMenuFullAddress.add(optionFullAddress);
 
+    // Create dropdown menu
     let selectMenuMakeName = document.getElementById("mySelectMakeName");
     let optionMakeName = document.createElement("option");
     optionMakeName.text = newRow.makeName;
     optionMakeName.value = newRow.makeID;
     selectMenuMakeName.add(optionMakeName);
 
+    // Create dropdown menu
     let selectMenuModelYear = document.getElementById("mySelectModelYear");
     let optionModelYear = document.createElement("option");
     optionModelYear.text = newRow.modelYear;
     optionModelYear.value = newRow.modelID;
     selectMenuModelYear.add(optionModelYear);
+
+    
+    // Reload data 
     location.reload()
 }

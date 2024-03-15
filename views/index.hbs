@@ -3,7 +3,7 @@
 // URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/Step%200%20-%20Setting%20Up%20Node.js
 // Application: Visual Studio Code, version 1.85.1 
 // Type: starter/example code provided by Dr. Michael Curry, starter/example code is filled in/modified by Jason Szeto
-// Author(s): Dr. Michael Curry, Jason Szeto
+// Author(s): Dr. Michael Curry
 // Code version: N/A -->
 
 <!-- index.hbs -->
@@ -11,7 +11,7 @@
 <h2>Search for a Driver</h2>
 <form id="search-driver-html" method='GET' action='/'>
     <label for="input-lastname">Search by Last Name: </label>
-    <input type="text" name="lastname" id="input-lastname-html-search">
+    <input type="text" name="lastname" id="input-lastname-html-search" placeholder="required">
     <input type="submit">
     <a href='/'><button>Reset</button></a>
 </form>
@@ -70,6 +70,7 @@
 {{!-- Embed our javascript to handle the DOM manipulation and AJAX request --}}
 <script src="./js/add_driver.js"></script>
 
+{{!-- Form to update a record on the table  --}}
 <h2>Update A Driver's Email </h2>
 <form id="update-driver-form-ajax">
 
